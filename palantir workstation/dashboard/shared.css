@@ -222,60 +222,7 @@ body {
     margin-bottom: 15px;
 }
 
-.category-column.overview .tool-item {
-    position: relative;
-    display: block;
-    cursor: pointer;
-    padding-left: 15px;
-    transition: all 0.3s ease;
-    text-decoration: none;
-    color: inherit;
-}
-
-.category-column.overview .tool-item.selected { padding-left: 20px; }
-
-.category-column.overview .tool-item::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 0;
-    height: 16px;
-    border: 1px solid var(--grid);
-    transition: all 0.3s ease;
-}
-
-.category-column.overview .tool-item.selected::before {
-    width: 8px;
-    border-color: white;
-}
-
-.category-column.overview .tool-item-name {
-    font-size: 16px;
-    font-weight: 400;
-    letter-spacing: 1px;
-    margin-bottom: 5px;
-    transition: color 0.3s ease;
-}
-
-.category-column.overview .tool-item:hover .tool-item-name,
-.category-column.overview .tool-item.selected .tool-item-name { color: white; }
-
-.category-column.overview .tool-item-underline {
-    position: absolute;
-    bottom: -3px;
-    left: 0;
-    width: 0;
-    height: 1px;
-    background: var(--grid);
-    transition: width 0.3s ease;
-}
-
-.category-column.overview .tool-item:hover .tool-item-underline,
-.category-column.overview .tool-item.selected .tool-item-underline { width: 100%; }
-
-.category-column.overview .tool-item.selected .tool-item-underline { background: white; }
+/* Overview items inherit all .tool-item styles from the base rules below */
 
 /* ─── Tool Items ───────────────────────────────────────────── */
 .tool-item {

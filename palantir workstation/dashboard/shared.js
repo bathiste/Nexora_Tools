@@ -13,6 +13,66 @@
         { name: 'Settings',     href: 'settings.html',   status: 'active',  statusText: 'Active',  category: 'analytics'    },
     ];
 
+    // Placeholder data for tool pages (label, title, description, dotClass, statusText)
+    var PLACEHOLDER_PAGES = {
+        'nmap.html': {
+            label: 'Application',
+            title: 'Nmap',
+            desc: 'Network exploration tool and port scanner. Used for host discovery, open port enumeration, service version detection, and OS fingerprinting on authorized targets.',
+            dotClass: 'active',
+            statusText: 'Active — Module ready'
+        },
+        'metasploit.html': {
+            label: 'Application',
+            title: 'Metasploit',
+            desc: 'Advanced exploit framework for penetration testing. Provides a comprehensive library of exploits, payloads, and post-exploitation modules for authorized security assessments.',
+            dotClass: '',
+            statusText: 'Standby — Awaiting target'
+        },
+        'burpsuite.html': {
+            label: 'Application',
+            title: 'Burp Suite',
+            desc: 'Web application security testing platform. Intercepts HTTP/S traffic, crawls web targets, and identifies injection points, authentication flaws, and business logic vulnerabilities.',
+            dotClass: '',
+            statusText: 'Standby — Proxy inactive'
+        },
+        'maltego.html': {
+            label: 'Analytics',
+            title: 'Maltego',
+            desc: 'Open-source intelligence and graphical link analysis tool. Maps relationships between domains, IP addresses, email addresses, social profiles, and infrastructure components.',
+            dotClass: 'active',
+            statusText: 'Active — Graph engine ready'
+        },
+        'ai.html': {
+            label: 'Analytics',
+            title: 'AI Assistant',
+            desc: 'Intelligent security analysis and threat intelligence assistant. Assists with vulnerability research, report generation, payload crafting guidance, and CVE lookups on authorized engagements.',
+            dotClass: '',
+            statusText: 'Standby — Initializing model'
+        },
+        'threatmap.html': {
+            label: 'Analytics',
+            title: 'Threat Map',
+            desc: 'Real-time threat intelligence visualization. Displays global attack patterns, active threats, and security events aggregated from multiple intelligence feeds.',
+            dotClass: 'active',
+            statusText: 'Active — Feed connected'
+        },
+        'settings.html': {
+            label: 'System',
+            title: 'Settings',
+            desc: 'Platform configuration and preferences. Manage proxy settings, user agent rotation, API keys, logging level, and integration endpoints for connected tools.',
+            dotClass: 'active',
+            statusText: 'Active — Configuration loaded'
+        },
+        'dashboard.html': {
+            label: 'Platform Overview',
+            title: 'Gotham',
+            desc: 'Select a tool from the navigation panel to begin your authorized penetration testing session. All activity is logged and requires valid authorization.',
+            dotClass: 'active',
+            statusText: 'Platform Online'
+        }
+    };
+
     function toolItemHTML(tool, currentHref) {
         var sel = tool.href === currentHref;
         return (
@@ -105,6 +165,35 @@
             : '<rect x="0" y="0" width="10" height="10" fill="none" stroke="white" stroke-width="1"/>';
     }
 
+    /**
+     * Renders a placeholder tool page from the PLACEHOLDER_PAGES lookup table.
+     * Call from any simple placeholder HTML file: <script>initToolPage();</script>
+     */
+    function initToolPage() {
+        var pageName = window.location.pathname.split('/').pop();
+        var data = PLACEHOLDER_PAGES[pageName];
+        if (!data) {
+            data = { label: 'Tool', title: pageName, desc: '', dotClass: '', statusText: 'Ready' };
+        }
+
+        var html =
+            '<div class="tool-content">' +
+            '<div class="tool-placeholder">' +
+            '<span class="tool-placeholder-label">' + data.label + '</span>' +
+            '<h1 class="tool-placeholder-name">' + data.title + '</h1>' +
+            '<p class="tool-placeholder-desc">' + data.desc + '</p>' +
+            '<div class="tool-placeholder-status">' +
+            '<span class="tool-placeholder-dot ' + data.dotClass + '"></span>' +
+            '<span>' + data.statusText + '</span>' +
+            '</div>' +
+            '</div>' +
+            '</div>';
+
+        // Insert before the <script> tags that load shared.js
+        document.body.insertAdjacentHTML('afterbegin', html);
+    }
+
     window.initShell = initShell;
+    window.initToolPage = initToolPage;
 }());
 

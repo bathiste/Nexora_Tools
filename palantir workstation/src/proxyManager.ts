@@ -3,6 +3,8 @@ import { SocksProxyAgent } from 'socks-proxy-agent';
 import { HttpProxyAgent } from 'http-proxy-agent';
 import { HttpsProxyAgent } from 'https-proxy-agent';
 
+import * as fs from 'fs';
+
 export class ProxyManager {
   private proxies: ProxyConfig[];
   private currentIndex: number = 0;
@@ -13,7 +15,6 @@ export class ProxyManager {
     // Auto-load from default path if file exists and no proxies provided
     if (this.proxies.length === 0) {
       try {
-        const fs = require('fs');
         if (fs.existsSync(autoLoadPath)) {
           this.loadFromFile(autoLoadPath);
         }
@@ -28,7 +29,6 @@ export class ProxyManager {
   }
 
   loadFromFile(filePath: string): void {
-    const fs = require('fs');
     const content = fs.readFileSync(filePath, 'utf-8');
     const lines = content.split('\n').map((line: string) => line.trim()).filter((line: string) => line);
     
