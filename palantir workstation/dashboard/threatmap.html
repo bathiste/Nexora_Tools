@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World Threat Map - NEXORA GOTHAM PLATFORM</title>
+    <link rel="stylesheet" href="shared.css">
+    <style>
+        /* Threat Map specific styles */
+        .threatmap-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            background: #0a0a0f;
+            overflow: hidden;
+        }
+        
+        #worldCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, #0f1419 0%, #0a0a0f 100%);
+        }
+        
+        .stats-overlay {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(24, 24, 28, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            color: white;
+            backdrop-filter: blur(10px);
+            z-index: 10;
+            min-width: 250px;
+        }
+        
+        .stats-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #81c784;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .stat-label {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .stat-value {
+            font-weight: 600;
+            color: white;
+        }
+        
+        .attack-info {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(24, 24, 28, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            color: white;
+            backdrop-filter: blur(10px);
+            z-index: 10;
+            max-width: 300px;
+        }
+        
+        .attack-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #ff6b6b;
+        }
+        
+        .attack-details {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.4;
+        }
+        
+        .connection-status {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(24, 24, 28, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: white;
+            backdrop-filter: blur(10px);
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ffb74d;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-dot.connected {
+            background: #81c784;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .legend {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(24, 24, 28, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            color: white;
+            backdrop-filter: blur(10px);
+            z-index: 10;
+        }
+        
+        .legend-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+            font-size: 12px;
+        }
+        
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .controls {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(24, 24, 28, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 10px;
+            backdrop-filter: blur(10px);
+            z-index: 10;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .control-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .control-btn.active {
+            background: #81c784;
+            color: #0a0a0f;
+            border-color: #81c784;
+        }
+    </style>
+</head>
+<body>
+    <div class="tool-content">
+        <div class="threatmap-container">
+            <canvas id="worldCanvas"></canvas>
+            
+            <!-- Statistics Overlay -->
+            <div class="stats-overlay">
+                <div class="stats-title">Threat Statistics</div>
+                <div class="stat-item">
+                    <span class="stat-label">Today's Attacks:</span>
+                    <span class="stat-value" id="todayAttacks">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Active Arcs:</span>
+                    <span class="stat-value" id="activeArcs">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Countries:</span>
+                    <span class="stat-value" id="activeCountries">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Top Attack:</span>
+                    <span class="stat-value" id="topAttack">-</span>
+                </div>
+            </div>
+            
+            <!-- Connection Status -->
+            <div class="connection-status">
+                <div class="status-dot" id="connectionStatus"></div>
+                <span id="connectionText">Connecting...</span>
+            </div>
+            
+            <!-- Controls -->
+            <div class="controls">
+                <button class="control-btn active" id="toggleArcs" onclick="toggleArcs()">Arcs: ON</button>
+                <button class="control-btn active" id="togglePulses" onclick="togglePulses()">Pulses: ON</button>
+                <button class="control-btn" onclick="clearArcs()">Clear</button>
+            </div>
+            
+            <!-- Attack Information -->
+            <div class="attack-info" id="attackInfo" style="display: none;">
+                <div class="attack-title" id="attackTitle">Latest Attack</div>
+                <div class="attack-details" id="attackDetails">
+                    Waiting for attack data...
+                </div>
+            </div>
+            
+            <!-- Legend -->
+            <div class="legend">
+                <div class="legend-title">Attack Types</div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #ff6b6b;"></div>
+                    <span>Exploit</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #4ecdc4;"></div>
+                    <span>Malware</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #45b7d1;"></div>
+                    <span>Botnet</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #f9ca24;"></div>
+                    <span>Other</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="shared.js"></script>
+    <script>
+        // Global variables
+        const canvas = document.getElementById('worldCanvas');
+        const ctx = canvas.getContext('2d');
+        let eventSource = null;
+        let arcs = [];
+        let pulses = [];
+        let stats = {
+            today: 0,
+            recentPeriod: [],
+            activeCountries: new Set(),
+            topAttack: null,
+            attackCounts: {}
+        };
+        let settings = {
+            showArcs: true,
+            showPulses: true
+        };
+        
+        // Canvas setup
+        function setupCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        
+        // World coordinates (simplified)
+        function latLngToCanvas(lat, lng) {
+            const x = (lng + 180) * (canvas.width / 360);
+            const y = (90 - lat) * (canvas.height / 180);
+            return { x, y };
+        }
+        
+        // Draw world map (simplified)
+        function drawWorldMap() {
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.lineWidth = 1;
+            
+            // Draw simplified continents (basic shapes)
+            ctx.beginPath();
+            
+            // North America
+            ctx.moveTo(canvas.width * 0.2, canvas.height * 0.3);
+            ctx.lineTo(canvas.width * 0.3, canvas.height * 0.25);
+            ctx.lineTo(canvas.width * 0.35, canvas.height * 0.35);
+            ctx.lineTo(canvas.width * 0.25, canvas.height * 0.4);
+            ctx.lineTo(canvas.width * 0.15, canvas.height * 0.35);
+            ctx.closePath();
+            ctx.stroke();
+            
+            // South America
+            ctx.beginPath();
+            ctx.moveTo(canvas.width * 0.25, canvas.height * 0.55);
+            ctx.lineTo(canvas.width * 0.3, canvas.height * 0.5);
+            ctx.lineTo(canvas.width * 0.35, canvas.height * 0.65);
+            ctx.lineTo(canvas.width * 0.3, canvas.height * 0.75);
+            ctx.lineTo(canvas.width * 0.25, canvas.height * 0.8);
+            ctx.lineTo(canvas.width * 0.2, canvas.height * 0.7);
+            ctx.closePath();
+            ctx.stroke();
+            
+            // Europe
+            ctx.beginPath();
+            ctx.moveTo(canvas.width * 0.48, canvas.height * 0.25);
+            ctx.lineTo(canvas.width * 0.52, canvas.height * 0.22);
+            ctx.lineTo(canvas.width * 0.55, canvas.height * 0.3);
+            ctx.lineTo(canvas.width * 0.5, canvas.height * 0.35);
+            ctx.lineTo(canvas.width * 0.45, canvas.height * 0.3);
+            ctx.closePath();
+            ctx.stroke();
+            
+            // Africa
+            ctx.beginPath();
+            ctx.moveTo(canvas.width * 0.48, canvas.height * 0.4);
+            ctx.lineTo(canvas.width * 0.52, canvas.height * 0.38);
+            ctx.lineTo(canvas.width * 0.55, canvas.height * 0.5);
+            ctx.lineTo(canvas.width * 0.52, canvas.height * 0.65);
+            ctx.lineTo(canvas.width * 0.48, canvas.height * 0.7);
+            ctx.lineTo(canvas.width * 0.45, canvas.height * 0.55);
+            ctx.closePath();
+            ctx.stroke();
+            
+            // Asia
+            ctx.beginPath();
+            ctx.moveTo(canvas.width * 0.6, canvas.height * 0.25);
+            ctx.lineTo(canvas.width * 0.8, canvas.height * 0.2);
+            ctx.lineTo(canvas.width * 0.85, canvas.height * 0.35);
+            ctx.lineTo(canvas.width * 0.75, canvas.height * 0.45);
+            ctx.lineTo(canvas.width * 0.65, canvas.height * 0.4);
+            ctx.lineTo(canvas.width * 0.6, canvas.height * 0.3);
+            ctx.closePath();
+            ctx.stroke();
+            
+            // Australia
+            ctx.beginPath();
+            ctx.moveTo(canvas.width * 0.75, canvas.height * 0.65);
+            ctx.lineTo(canvas.width * 0.85, canvas.height * 0.62);
+            ctx.lineTo(canvas.width * 0.82, canvas.height * 0.72);
+            ctx.lineTo(canvas.width * 0.72, canvas.height * 0.75);
+            ctx.lineTo(canvas.width * 0.7, canvas.height * 0.68);
+            ctx.closePath();
+            ctx.stroke();
+        }
+        
+        // Attack arc class
+        class AttackArc {
+            constructor(source, target, attackName, attackType, count) {
+                this.source = source;
+                this.target = target;
+                this.attackName = attackName;
+                this.attackType = attackType;
+                this.count = count;
+                this.progress = 0;
+                this.opacity = 1;
+                this.color = this.getAttackColor(attackType);
+                this.speed = 0.02 + Math.random() * 0.02;
+            }
+            
+            getAttackColor(type) {
+                const colors = {
+                    'exploit': '#ff6b6b',
+                    'malware': '#4ecdc4',
+                    'botnet': '#45b7d1',
+                    'default': '#f9ca24'
+                };
+                return colors[type] || colors.default;
+            }
+            
+            update() {
+                this.progress += this.speed;
+                if (this.progress > 1) {
+                    this.opacity -= 0.05;
+                }
+                return this.opacity > 0;
+            }
+            
+            draw() {
+                const sourcePos = latLngToCanvas(this.source.lat, this.source.lng);
+                const targetPos = latLngToCanvas(this.target.lat, this.target.lng);
+                
+                // Calculate arc position
+                const arcProgress = Math.min(this.progress, 1);
+                const currentX = sourcePos.x + (targetPos.x - sourcePos.x) * arcProgress;
+                const currentY = sourcePos.y + (targetPos.y - sourcePos.y) * arcProgress;
+                
+                // Draw arc line
+                if (settings.showArcs) {
+                    ctx.strokeStyle = this.color;
+                    ctx.globalAlpha = this.opacity * 0.3;
+                    ctx.lineWidth = Math.max(1, this.count / 10);
+                    ctx.beginPath();
+                    ctx.moveTo(sourcePos.x, sourcePos.y);
+                    ctx.lineTo(targetPos.x, targetPos.y);
+                    ctx.stroke();
+                }
+                
+                // Draw moving point
+                ctx.globalAlpha = this.opacity;
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(currentX, currentY, Math.max(3, this.count / 5), 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Draw glow effect
+                if (settings.showPulses) {
+                    const gradient = ctx.createRadialGradient(currentX, currentY, 0, currentX, currentY, 20);
+                    gradient.addColorStop(0, this.color + '40');
+                    gradient.addColorStop(1, this.color + '00');
+                    ctx.fillStyle = gradient;
+                    ctx.beginPath();
+                    ctx.arc(currentX, currentY, 20, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                
+                ctx.globalAlpha = 1;
+            }
+        }
+        
+        // Pulse effect for attack locations
+        class Pulse {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.radius = 5;
+                this.maxRadius = 30;
+                this.opacity = 1;
+            }
+            
+            update() {
+                this.radius += 1;
+                this.opacity = 1 - (this.radius / this.maxRadius);
+                return this.radius < this.maxRadius;
+            }
+            
+            draw() {
+                if (!settings.showPulses) return;
+                
+                ctx.strokeStyle = this.color;
+                ctx.globalAlpha = this.opacity * 0.5;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.globalAlpha = 1;
+            }
+        }
+        
+        // Connect to ThreatMap API
+        function connectToThreatMap() {
+            try {
+                eventSource = new EventSource('https://threatmap-api.checkpoint.com/ThreatMap/api/feed');
+                
+                eventSource.onopen = function() {
+                    updateConnectionStatus(true);
+                    console.log('Connected to ThreatMap API');
+                };
+                
+                eventSource.onmessage = function(event) {
+                    const data = JSON.parse(event.data);
+                    
+                    if (data.recentPeriod && data.today) {
+                        updateStats(data);
+                    }
+                };
+                
+                eventSource.addEventListener('attack', function(event) {
+                    const data = JSON.parse(event.data);
+                    handleAttack(data);
+                });
+                
+                eventSource.addEventListener('counter', function(event) {
+                    const data = JSON.parse(event.data);
+                    updateStats(data);
+                });
+                
+                eventSource.onerror = function() {
+                    updateConnectionStatus(false);
+                    console.log('Error connecting to ThreatMap API');
+                    
+                    // Simulate data for demo
+                    simulateAttacks();
+                };
+                
+            } catch (error) {
+                console.error('Failed to connect to ThreatMap API:', error);
+                updateConnectionStatus(false);
+                simulateAttacks();
+            }
+        }
+        
+        // Handle attack data
+        function handleAttack(data) {
+            if (!data.s_la || !data.s_lo || !data.d_la || !data.d_lo) return;
+            
+            const source = {
+                lat: data.s_la,
+                lng: data.s_lo,
+                country: data.s_co,
+                state: data.s_s
+            };
+            
+            const target = {
+                lat: data.d_la,
+                lng: data.d_lo,
+                country: data.d_co,
+                state: data.d_s
+            };
+            
+            // Create attack arc
+            const arc = new AttackArc(source, target, data.a_n, data.a_t, data.a_c);
+            arcs.push(arc);
+            
+            // Create pulse at source
+            const sourcePos = latLngToCanvas(source.lat, source.lng);
+            pulses.push(new Pulse(sourcePos.x, sourcePos.y, arc.color));
+            
+            // Update statistics
+            stats.activeCountries.add(source.country);
+            if (target.country) stats.activeCountries.add(target.country);
+            
+            // Track attack types
+            const attackName = data.a_n || 'Unknown';
+            stats.attackCounts[attackName] = (stats.attackCounts[attackName] || 0) + data.a_c;
+            
+            // Update display
+            updateAttackInfo(data);
+            updateStatsDisplay();
+        }
+        
+        // Update statistics
+        function updateStats(data) {
+            stats.today = data.today || 0;
+            stats.recentPeriod = data.recentPeriod || [];
+            updateStatsDisplay();
+        }
+        
+        // Update statistics display
+        function updateStatsDisplay() {
+            document.getElementById('todayAttacks').textContent = stats.today.toLocaleString();
+            document.getElementById('activeArcs').textContent = arcs.length;
+            document.getElementById('activeCountries').textContent = stats.activeCountries.size;
+            
+            // Find top attack
+            if (Object.keys(stats.attackCounts).length > 0) {
+                const topAttack = Object.entries(stats.attackCounts)
+                    .sort(([,a], [,b]) => b - a)[0];
+                document.getElementById('topAttack').textContent = topAttack[0];
+            }
+        }
+        
+        // Update attack information
+        function updateAttackInfo(data) {
+            const infoDiv = document.getElementById('attackInfo');
+            const titleDiv = document.getElementById('attackTitle');
+            const detailsDiv = document.getElementById('attackDetails');
+            
+            infoDiv.style.display = 'block';
+            titleDiv.textContent = data.a_n || 'Unknown Attack';
+            
+            const details = [
+                `Type: ${data.a_t || 'Unknown'}`,
+                `Count: ${data.a_c || 1}`,
+                `From: ${data.s_co || 'Unknown'}${data.s_s ? ', ' + data.s_s : ''}`,
+                `To: ${data.d_co || 'Unknown'}${data.d_s ? ', ' + data.d_s : ''}`
+            ];
+            
+            detailsDiv.innerHTML = details.join('<br>');
+        }
+        
+        // Update connection status
+        function updateConnectionStatus(connected) {
+            const statusDot = document.getElementById('connectionStatus');
+            const statusText = document.getElementById('connectionText');
+            
+            if (connected) {
+                statusDot.classList.add('connected');
+                statusText.textContent = 'Connected';
+            } else {
+                statusDot.classList.remove('connected');
+                statusText.textContent = 'Demo Mode';
+            }
+        }
+        
+        // Simulate attacks for demo
+        function simulateAttacks() {
+            const demoAttacks = [
+                { s_la: 37.751, s_lo: -97.822, s_co: 'US', s_s: null, d_la: 51.5198, d_lo: 7.1571, d_co: 'DE', d_s: 'NW', a_n: 'SQL Injection', a_t: 'exploit', a_c: 5 },
+                { s_la: 35.6762, s_lo: 139.6503, s_co: 'JP', s_s: null, d_la: 37.5665, d_lo: 126.9780, d_co: 'KR', d_s: null, a_n: 'DDoS Attack', a_t: 'botnet', a_c: 15 },
+                { s_la: 55.7558, s_lo: 37.6173, s_co: 'RU', s_s: null, d_la: 51.5074, d_lo: -0.1278, d_co: 'GB', d_s: null, a_n: 'Ransomware', a_t: 'malware', a_c: 3 },
+                { s_la: -23.5505, s_lo: -46.6333, s_co: 'BR', s_s: null, d_la: 40.4168, d_lo: -3.7038, d_co: 'ES', d_s: null, a_n: 'Cross-Site Scripting', a_t: 'exploit', a_c: 8 },
+                { s_la: 1.3521, s_lo: 103.8198, s_co: 'SG', s_s: null, d_la: -33.8688, d_lo: 151.2093, d_co: 'AU', d_s: null, a_n: 'Port Scanning', a_t: 'botnet', a_c: 12 }
+            ];
+            
+            setInterval(() => {
+                if (arcs.length < 20) {
+                    const attack = demoAttacks[Math.floor(Math.random() * demoAttacks.length)];
+                    handleAttack(attack);
+                }
+            }, 2000);
+            
+            // Update counter
+            setInterval(() => {
+                stats.today += Math.floor(Math.random() * 100) + 50;
+                updateStatsDisplay();
+            }, 5000);
+        }
+        
+        // Animation loop
+        function animate() {
+            // Clear canvas
+            ctx.fillStyle = 'rgba(10, 10, 15, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw world map
+            drawWorldMap();
+            
+            // Update and draw pulses
+            pulses = pulses.filter(pulse => {
+                const alive = pulse.update();
+                if (alive) pulse.draw();
+                return alive;
+            });
+            
+            // Update and draw arcs
+            arcs = arcs.filter(arc => {
+                const alive = arc.update();
+                if (alive) arc.draw();
+                return alive;
+            });
+            
+            requestAnimationFrame(animate);
+        }
+        
+        // Control functions
+        function toggleArcs() {
+            settings.showArcs = !settings.showArcs;
+            const btn = document.getElementById('toggleArcs');
+            btn.textContent = `Arcs: ${settings.showArcs ? 'ON' : 'OFF'}`;
+            btn.classList.toggle('active', settings.showArcs);
+        }
+        
+        function togglePulses() {
+            settings.showPulses = !settings.showPulses;
+            const btn = document.getElementById('togglePulses');
+            btn.textContent = `Pulses: ${settings.showPulses ? 'ON' : 'OFF'}`;
+            btn.classList.toggle('active', settings.showPulses);
+        }
+        
+        function clearArcs() {
+            arcs = [];
+            pulses = [];
+        }
+        
+        // Initialize
+        window.addEventListener('load', function() {
+            setupCanvas();
+            connectToThreatMap();
+            animate();
+        });
+        
+        // Handle window resize
+        window.addEventListener('resize', setupCanvas);
+    </script>
+    <script>initShell('threatmap.html');</script>
+</body>
+</html>

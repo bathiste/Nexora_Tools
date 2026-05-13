@@ -1,0 +1,11 @@
+# Proxy format: type://host:port or type://username:password@host:port
+# Supported types: socks4, socks5, http, https
+#
+# Examples (replace with your actual proxies):
+# socks5://127.0.0.1:1080
+# socks4://proxy.example.com:1080
+# http://user:pass@proxy.example.com:8080
+# https://proxy.example.com:8080
+#
+# Add your proxies below:
+

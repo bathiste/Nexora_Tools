@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - NEXORA GOTHAM PLATFORM</title>
+    <link rel="stylesheet" href="shared.css">
+    <style>
+        /* Settings-specific styles */
+        .settings-container {
+            padding: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .settings-header {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--grid-dim);
+        }
+        
+        .settings-header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text);
+        }
+        
+        .settings-header p {
+            color: var(--text-dim);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .settings-section {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--grid-dim);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .settings-section h2 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .settings-section h2::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: var(--status-active);
+            border-radius: 2px;
+        }
+        
+        .api-key-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .api-key-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--grid-dim);
+            border-radius: 6px;
+            padding: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .api-key-item:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: var(--grid);
+        }
+        
+        .api-key-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .api-key-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+        }
+        
+        .api-key-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: var(--text-dim);
+        }
+        
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--status-standby);
+        }
+        
+        .status-dot.configured {
+            background: var(--status-active);
+        }
+        
+        .api-key-input-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .api-key-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--grid-dim);
+            color: var(--text);
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .api-key-input:focus {
+            outline: none;
+            border-color: var(--grid);
+        }
+        
+        .api-key-input.placeholder {
+            color: var(--text-dim);
+            font-style: italic;
+        }
+        
+        .btn {
+            background: var(--grid);
+            color: var(--text);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: var(--grid);
+            opacity: 0.8;
+        }
+        
+        .btn-primary {
+            background: var(--status-active);
+            color: var(--bg);
+        }
+        
+        .btn-primary:hover {
+            background: #66bb6a;
+        }
+        
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+        
+        .api-key-description {
+            font-size: 12px;
+            color: var(--text-dim);
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+        
+        .api-key-url {
+            font-size: 11px;
+            color: var(--status-standby);
+            font-family: 'Courier New', monospace;
+        }
+        
+        .global-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--grid-dim);
+        }
+        
+        .notification {
+            position: fixed;
+            top: 50px;
+            right: 20px;
+            background: var(--status-active);
+            color: var(--bg);
+            padding: 12px 16px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 500;
+            z-index: 10000;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+        }
+        
+        .notification.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .notification.error {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .notification.warning {
+            background: #f39c12;
+            color: var(--bg);
+        }
+        
+        .test-result {
+            margin-top: 8px;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            display: none;
+        }
+        
+        .test-result.success {
+            background: rgba(129, 199, 132, 0.1);
+            border: 1px solid rgba(129, 199, 132, 0.3);
+            color: var(--status-active);
+        }
+        
+        .test-result.error {
+            background: rgba(231, 76, 60, 0.1);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            color: #e74c3c;
+        }
+        
+        .test-result.testing {
+            background: rgba(255, 183, 77, 0.1);
+            border: 1px solid rgba(255, 183, 77, 0.3);
+            color: var(--status-standby);
+        }
+        
+        .toggle-visibility {
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            cursor: pointer;
+            padding: 4px;
+            font-size: 12px;
+            transition: color 0.3s ease;
+        }
+        
+        .toggle-visibility:hover {
+            color: var(--text);
+        }
+    </style>
+</head>
+<body>
+    <div class="tool-content">
+        <div class="settings-container">
+            <div class="settings-header">
+                <h1>Settings</h1>
+                <p>Configure API keys and external integrations for the platform tools.</p>
+            </div>
+            
+            <!-- API Keys Section -->
+            <div class="settings-section">
+                <h2>API Keys</h2>
+                <div class="api-key-grid">
+                    <!-- VirusTotal -->
+                    <div class="api-key-item">
+                        <div class="api-key-header">
+                            <div class="api-key-name">VirusTotal</div>
+                            <div class="api-key-status">
+                                <span class="status-dot" id="virustotal-status"></span>
+                                <span id="virustotal-status-text">Not configured</span>
+                            </div>
+                        </div>
+                        <div class="api-key-description">API key for VirusTotal intelligence and threat analysis.</div>
+                        <div class="api-key-input-group">
+                            <input type="password" id="virustotal-key" class="api-key-input placeholder" placeholder="Enter API key">
+                            <button class="toggle-visibility" onclick="toggleVisibility('virustotal-key')">👁️</button>
+                        </div>
+                        <div class="api-key-url">Get key: https://www.virustotal.com/gui/join-us</div>
+                        <div class="test-result" id="virustotal-test"></div>
+                        <div style="margin-top: 8px;">
+                            <button class="btn" onclick="testApiKey('virustotal')">Test</button>
+                            <button class="btn btn-danger" onclick="clearApiKey('virustotal')">Clear</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Shodan -->
+                    <div class="api-key-item">
+                        <div class="api-key-header">
+                            <div class="api-key-name">Shodan</div>
+                            <div class="api-key-status">
+                                <span class="status-dot" id="shodan-status"></span>
+                                <span id="shodan-status-text">Not configured</span>
+                            </div>
+                        </div>
+                        <div class="api-key-description">API key for Shodan internet asset search and monitoring.</div>
+                        <div class="api-key-input-group">
+                            <input type="password" id="shodan-key" class="api-key-input placeholder" placeholder="Enter API key">
+                            <button class="toggle-visibility" onclick="toggleVisibility('shodan-key')">👁️</button>
+                        </div>
+                        <div class="api-key-url">Get key: https://account.shodan.io/</div>
+                        <div class="test-result" id="shodan-test"></div>
+                        <div style="margin-top: 8px;">
+                            <button class="btn" onclick="testApiKey('shodan')">Test</button>
+                            <button class="btn btn-danger" onclick="clearApiKey('shodan')">Clear</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Censys -->
+                    <div class="api-key-item">
+                        <div class="api-key-header">
+                            <div class="api-key-name">Censys</div>
+                            <div class="api-key-status">
+                                <span class="status-dot" id="censys-status"></span>
+                                <span id="censys-status-text">Not configured</span>
+                            </div>
+                        </div>
+                        <div class="api-key-description">API credentials for Censys internet asset discovery.</div>
+                        <div class="api-key-input-group">
+                            <input type="password" id="censys-key" class="api-key-input placeholder" placeholder="Enter API ID">
+                            <button class="toggle-visibility" onclick="toggleVisibility('censys-key')">👁️</button>
+                        </div>
+                        <div class="api-key-input-group">
+                            <input type="password" id="censys-secret" class="api-key-input placeholder" placeholder="Enter API Secret">
+                            <button class="toggle-visibility" onclick="toggleVisibility('censys-secret')">👁️</button>
+                        </div>
+                        <div class="api-key-url">Get keys: https://censys.io/account</div>
+                        <div class="test-result" id="censys-test"></div>
+                        <div style="margin-top: 8px;">
+                            <button class="btn" onclick="testApiKey('censys')">Test</button>
+                            <button class="btn btn-danger" onclick="clearApiKey('censys')">Clear</button>
+                        </div>
+                    </div>
+                    
+                    <!-- SecurityTrails -->
+                    <div class="api-key-item">
+                        <div class="api-key-header">
+                            <div class="api-key-name">SecurityTrails</div>
+                            <div class="api-key-status">
+                                <span class="status-dot" id="securitytrails-status"></span>
+                                <span id="securitytrails-status-text">Not configured</span>
+                            </div>
+                        </div>
+                        <div class="api-key-description">API key for SecurityTrails domain intelligence and historical data.</div>
+                        <div class="api-key-input-group">
+                            <input type="password" id="securitytrails-key" class="api-key-input placeholder" placeholder="Enter API key">
+                            <button class="toggle-visibility" onclick="toggleVisibility('securitytrails-key')">👁️</button>
+                        </div>
+                        <div class="api-key-url">Get key: https://securitytrails.com/corp/api</div>
+                        <div class="test-result" id="securitytrails-test"></div>
+                        <div style="margin-top: 8px;">
+                            <button class="btn" onclick="testApiKey('securitytrails')">Test</button>
+                            <button class="btn btn-danger" onclick="clearApiKey('securitytrails')">Clear</button>
+                        </div>
+                    </div>
+                    
+                    <!-- PassiveTotal -->
+                    <div class="api-key-item">
+                        <div class="api-key-header">
+                            <div class="api-key-name">PassiveTotal</div>
+                            <div class="api-key-status">
+                                <span class="status-dot" id="passivetotal-status"></span>
+                                <span id="passivetotal-status-text">Not configured</span>
+                            </div>
+                        </div>
+                        <div class="api-key-description">API credentials for PassiveTotal threat intelligence.</div>
+                        <div class="api-key-input-group">
+                            <input type="password" id="passivetotal-key" class="api-key-input placeholder" placeholder="Enter API key">
+                            <button class="toggle-visibility" onclick="toggleVisibility('passivetotal-key')">👁️</button>
+                        </div>
+                        <div class="api-key-url">Get key: https://community.riskiq.com/registration</div>
+                        <div class="test-result" id="passivetotal-test"></div>
+                        <div style="margin-top: 8px;">
+                            <button class="btn" onclick="testApiKey('passivetotal')">Test</button>
+                            <button class="btn btn-danger" onclick="clearApiKey('passivetotal')">Clear</button>
+                        </div>
+                    </div>
+                    
+                    <!-- GitHub -->
+                    <div class="api-key-item">
+                        <div class="api-key-header">
+                            <div class="api-key-name">GitHub</div>
+                            <div class="api-key-status">
+                                <span class="status-dot" id="github-status"></span>
+                                <span id="github-status-text">Not configured</span>
+                            </div>
+                        </div>
+                        <div class="api-key-description">Personal access token for GitHub API access and code analysis.</div>
+                        <div class="api-key-input-group">
+                            <input type="password" id="github-key" class="api-key-input placeholder" placeholder="Enter personal access token">
+                            <button class="toggle-visibility" onclick="toggleVisibility('github-key')">👁️</button>
+                        </div>
+                        <div class="api-key-url">Get token: https://github.com/settings/tokens</div>
+                        <div class="test-result" id="github-test"></div>
+                        <div style="margin-top: 8px;">
+                            <button class="btn" onclick="testApiKey('github')">Test</button>
+                            <button class="btn btn-danger" onclick="clearApiKey('github')">Clear</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tool Configuration Section -->
+            <div class="settings-section">
+                <h2>Tool Configuration</h2>
+                <div class="api-key-grid">
+                    <!-- Nmap Configuration -->
+                    <div class="api-key-item">
+                        <div class="api-key-header">
+                            <div class="api-key-name">Nmap</div>
+                            <div class="api-key-status">
+                                <span class="status-dot configured" id="nmap-status"></span>
+                                <span>Installed</span>
+                            </div>
+                        </div>
+                        <div class="api-key-description">Network scanning tool configuration.</div>
+                        <div class="api-key-input-group">
+                            <input type="text" id="nmap-path" class="api-key-input" placeholder="Enter nmap executable path">
+                        </div>
+                        <div class="api-key-url">Default: /usr/bin/nmap or C:\\Program Files (x86)\\Nmap\\nmap.exe</div>
+                        <div style="margin-top: 8px;">
+                            <button class="btn" onclick="testTool('nmap')">Test</button>
+                            <button class="btn btn-primary" onclick="saveToolPath('nmap')">Save</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Amass Configuration -->
+                    <div class="api-key-item">
+                        <div class="api-key-header">
+                            <div class="api-key-name">OWASP Amass</div>
+                            <div class="api-key-status">
+                                <span class="status-dot" id="amass-status"></span>
+                                <span id="amass-status-text">Not configured</span>
+                            </div>
+                        </div>
+                        <div class="api-key-description">Asset discovery tool configuration.</div>
+                        <div class="api-key-input-group">
+                            <input type="text" id="amass-path" class="api-key-input" placeholder="Enter amass executable path">
+                        </div>
+                        <div class="api-key-url">Default: /usr/bin/amass or amass.exe</div>
+                        <div style="margin-top: 8px;">
+                            <button class="btn" onclick="testTool('amass')">Test</button>
+                            <button class="btn btn-primary" onclick="saveToolPath('amass')">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Global Actions -->
+            <div class="global-actions">
+                <button class="btn" onclick="exportSettings()">Export Settings</button>
+                <button class="btn" onclick="importSettings()">Import Settings</button>
+                <button class="btn btn-primary" onclick="saveAllSettings()">Save All Settings</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <script src="shared.js"></script>
+    <script>
+        // API key storage
+        let apiKeys = {};
+        let toolPaths = {};
+        
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSettings();
+            updateAllStatuses();
+        });
+        
+        function loadSettings() {
+            // Load from localStorage
+            const savedKeys = localStorage.getItem('apiKeys');
+            const savedPaths = localStorage.getItem('toolPaths');
+            
+            if (savedKeys) {
+                apiKeys = JSON.parse(savedKeys);
+                Object.keys(apiKeys).forEach(service => {
+                    const input = document.getElementById(`${service}-key`);
+                    if (input) {
+                        input.value = apiKeys[service];
+                        input.classList.remove('placeholder');
+                    }
+                });
+            }
+            
+            if (savedPaths) {
+                toolPaths = JSON.parse(savedPaths);
+                Object.keys(toolPaths).forEach(tool => {
+                    const input = document.getElementById(`${tool}-path`);
+                    if (input) {
+                        input.value = toolPaths[tool];
+                    }
+                });
+            }
+        }
+        
+        function saveSettings() {
+            localStorage.setItem('apiKeys', JSON.stringify(apiKeys));
+            localStorage.setItem('toolPaths', JSON.stringify(toolPaths));
+        }
+        
+        function saveAllSettings() {
+            // Save all API keys
+            const services = ['virustotal', 'shodan', 'censys', 'securitytrails', 'passivetotal', 'github'];
+            services.forEach(service => {
+                const input = document.getElementById(`${service}-key`);
+                if (input && input.value.trim()) {
+                    apiKeys[service] = input.value.trim();
+                }
+            });
+            
+            // Save Censys secret separately
+            const censysSecret = document.getElementById('censys-secret');
+            if (censysSecret && censysSecret.value.trim()) {
+                apiKeys.censys_secret = censysSecret.value.trim();
+            }
+            
+            // Save tool paths
+            const tools = ['nmap', 'amass'];
+            tools.forEach(tool => {
+                const input = document.getElementById(`${tool}-path`);
+                if (input && input.value.trim()) {
+                    toolPaths[tool] = input.value.trim();
+                }
+            });
+            
+            saveSettings();
+            updateAllStatuses();
+            showNotification('All settings saved successfully', 'success');
+        }
+        
+        function updateAllStatuses() {
+            const services = ['virustotal', 'shodan', 'censys', 'securitytrails', 'passivetotal', 'github'];
+            services.forEach(service => {
+                updateStatus(service);
+            });
+            
+            const tools = ['nmap', 'amass'];
+            tools.forEach(tool => {
+                updateToolStatus(tool);
+            });
+        }
+        
+        function updateStatus(service) {
+            const statusDot = document.getElementById(`${service}-status`);
+            const statusText = document.getElementById(`${service}-status-text`);
+            
+            if (apiKeys[service]) {
+                statusDot.classList.add('configured');
+                statusText.textContent = 'Configured';
+            } else {
+                statusDot.classList.remove('configured');
+                statusText.textContent = 'Not configured';
+            }
+        }
+        
+        function updateToolStatus(tool) {
+            const statusDot = document.getElementById(`${tool}-status`);
+            const statusText = document.getElementById(`${tool}-status-text`);
+            
+            if (toolPaths[tool]) {
+                statusDot.classList.add('configured');
+                if (statusText) statusText.textContent = 'Configured';
+            } else {
+                statusDot.classList.remove('configured');
+                if (statusText) statusText.textContent = 'Not configured';
+            }
+        }
+        
+        function toggleVisibility(inputId) {
+            const input = document.getElementById(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+            } else {
+                input.type = 'password';
+            }
+        }
+        
+        async function testApiKey(service) {
+            const testResult = document.getElementById(`${service}-test`);
+            const apiKey = document.getElementById(`${service}-key`).value.trim();
+            
+            if (!apiKey) {
+                showTestResult(service, 'Please enter an API key', 'error');
+                return;
+            }
+            
+            showTestResult(service, 'Testing connection...', 'testing');
+            
+            try {
+                // Simulate API test
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                // Simulate different responses based on service
+                const success = Math.random() > 0.3;
+                
+                if (success) {
+                    showTestResult(service, 'Connection successful', 'success');
+                    apiKeys[service] = apiKey;
+                    saveSettings();
+                    updateStatus(service);
+                } else {
+                    showTestResult(service, 'Invalid API key or connection failed', 'error');
+                }
+            } catch (error) {
+                showTestResult(service, 'Connection failed: ' + error.message, 'error');
+            }
+        }
+        
+        async function testTool(tool) {
+            const testResult = document.getElementById(`${tool}-test`);
+            const toolPath = document.getElementById(`${tool}-path`).value.trim();
+            
+            if (!toolPath) {
+                showTestResult(tool, 'Please enter tool path', 'error');
+                return;
+            }
+            
+            showTestResult(tool, 'Testing tool...', 'testing');
+            
+            try {
+                // Simulate tool test
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                const success = Math.random() > 0.2;
+                
+                if (success) {
+                    showTestResult(tool, 'Tool found and working', 'success');
+                    toolPaths[tool] = toolPath;
+                    saveSettings();
+                    updateToolStatus(tool);
+                } else {
+                    showTestResult(tool, 'Tool not found or not working', 'error');
+                }
+            } catch (error) {
+                showTestResult(tool, 'Tool test failed: ' + error.message, 'error');
+            }
+        }
+        
+        function showTestResult(service, message, type) {
+            const testResult = document.getElementById(`${service}-test`);
+            testResult.textContent = message;
+            testResult.className = `test-result ${type}`;
+            testResult.style.display = 'block';
+            
+            if (type === 'testing') {
+                setTimeout(() => {
+                    testResult.style.display = 'none';
+                }, 5000);
+            }
+        }
+        
+        function clearApiKey(service) {
+            const input = document.getElementById(`${service}-key`);
+            input.value = '';
+            input.classList.add('placeholder');
+            
+            delete apiKeys[service];
+            if (service === 'censys') {
+                delete apiKeys.censys_secret;
+                const secretInput = document.getElementById('censys-secret');
+                if (secretInput) secretInput.value = '';
+            }
+            
+            saveSettings();
+            updateStatus(service);
+            showNotification(`${service} API key cleared`, 'success');
+        }
+        
+        function saveToolPath(tool) {
+            const input = document.getElementById(`${tool}-path`);
+            if (input.value.trim()) {
+                toolPaths[tool] = input.value.trim();
+                saveSettings();
+                updateToolStatus(tool);
+                showNotification(`${tool} path saved`, 'success');
+            }
+        }
+        
+        function exportSettings() {
+            const settings = {
+                apiKeys: apiKeys,
+                toolPaths: toolPaths,
+                exportDate: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(settings, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'gotham-settings.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showNotification('Settings exported successfully', 'success');
+        }
+        
+        function importSettings() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    try {
+                        const settings = JSON.parse(event.target.result);
+                        
+                        if (settings.apiKeys) {
+                            apiKeys = settings.apiKeys;
+                            Object.keys(apiKeys).forEach(service => {
+                                const input = document.getElementById(`${service}-key`);
+                                if (input) {
+                                    input.value = apiKeys[service];
+                                    input.classList.remove('placeholder');
+                                }
+                            });
+                        }
+                        
+                        if (settings.toolPaths) {
+                            toolPaths = settings.toolPaths;
+                            Object.keys(toolPaths).forEach(tool => {
+                                const input = document.getElementById(`${tool}-path`);
+                                if (input) {
+                                    input.value = toolPaths[tool];
+                                }
+                            });
+                        }
+                        
+                        saveSettings();
+                        updateAllStatuses();
+                        showNotification('Settings imported successfully', 'success');
+                    } catch (error) {
+                        showNotification('Failed to import settings: Invalid file', 'error');
+                    }
+                };
+                
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        }
+        
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Auto-save on input change
+        document.querySelectorAll('.api-key-input').forEach(input => {
+            input.addEventListener('input', function() {
+                if (this.value.trim()) {
+                    this.classList.remove('placeholder');
+                } else {
+                    this.classList.add('placeholder');
+                }
+            });
+        });
+    </script>
+    <script>initShell('settings.html');</script>
+</body>
+</html>

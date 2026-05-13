@@ -1,0 +1,1770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXORA GOTHAM PLATFORM</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #18181c;
+            --text: #ffffff;
+            --text-dim: rgba(255,255,255,0.4);
+            --grid: rgba(255,255,255,0.3);
+            --grid-dim: rgba(255,255,255,0.15);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* External titlebar - outside window border */
+        .titlebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 32px;
+            background: #0d0d10;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 10000;
+            -webkit-app-region: drag;
+        }
+
+        .titlebar-drag-area {
+            flex: 1;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            padding-left: 12px;
+        }
+
+        .titlebar-title {
+            font-size: 12px;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            color: var(--text-dim);
+        }
+
+        .window-controls {
+            display: flex;
+            height: 100%;
+            -webkit-app-region: no-drag;
+        }
+
+        .window-control {
+            width: 46px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .window-control:hover {
+            background: #2a2a2e;
+        }
+
+        .window-control.close:hover {
+            background: #e81123;
+        }
+
+        .window-control svg {
+            width: 10px;
+            height: 10px;
+            fill: white;
+        }
+
+        /* Window border lines - below titlebar */
+        .window-border {
+            position: fixed;
+            top: 42px;
+            left: 10px;
+            width: calc(100vw - 20px);
+            height: calc(100vh - 52px);
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .window-border-line {
+            position: absolute;
+            background: var(--grid);
+        }
+
+        .window-border-line.top {
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+        }
+
+        .window-border-line.bottom {
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+        }
+
+        .window-border-line.left {
+            top: 0;
+            bottom: 0;
+            left: 0;
+            width: 1px;
+        }
+
+        .window-border-line.right {
+            top: 0;
+            bottom: 0;
+            right: 0;
+            width: 1px;
+        }
+
+        #intro {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: var(--bg);
+        }
+
+        /* Logo center with rings - initial state */
+        .logo-center {
+            position: absolute;
+            left: 50%; top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 100;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 48px;
+            height: 48px;
+        }
+
+        .logo-center.move-left {
+            left: 100px;
+            transform: translate(0, -50%);
+        }
+
+        /* Hide rings when moving left */
+        .logo-center.move-left .circle-outer,
+        .logo-center.move-left .circle-inner {
+            opacity: 0 !important;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Bigger logo */
+        .logo {
+            width: 48px; height: 48px;
+            position: relative;
+        }
+
+        .palantir-icon::before {
+            content: '';
+            position: absolute;
+            top: 6px; left: 50%;
+            transform: translateX(-50%);
+            width: 18px; height: 18px;
+            border: 3px solid white;
+            border-radius: 50%;
+        }
+
+        .palantir-icon::after {
+            content: '';
+            position: absolute;
+            bottom: 8px; left: 50%;
+            transform: translateX(-50%);
+            width: 0; height: 0;
+            border-left: 11px solid transparent;
+            border-right: 11px solid transparent;
+            border-top: 9px solid white;
+        }
+
+        .palantir-icon { width: 100%; height: 100%; position: relative; }
+
+        /* Circles around logo */
+        .circle {
+            position: absolute;
+            border: 1px solid var(--grid);
+            border-radius: 50%;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+        }
+
+        .circle-outer {
+            width: 160px; height: 160px;
+            animation: circleIn 0.8s ease-out 0.2s forwards;
+        }
+
+        .circle-inner {
+            width: 100px; height: 100px;
+            border-style: dashed;
+            animation: circleIn 0.8s ease-out 0.4s forwards;
+        }
+
+        @keyframes circleIn { to { opacity: 1; } }
+
+        /* Horizontal line from logo */
+        .logo-line {
+            position: absolute;
+            left: 160px; top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 2px;
+            background: var(--grid);
+            opacity: 0;
+        }
+
+        .logo-line.show {
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .logo-line.extend {
+            animation: lineGrow 0.6s ease-out forwards;
+        }
+
+        .logo-line.fade {
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        @keyframes lineGrow {
+            to { width: 100px; }
+        }
+
+        /* Vertical line from logo (goes down) */
+        .logo-line-down {
+            position: absolute;
+            left: 100px; /* logo left position */
+            top: calc(50% + 24px); /* below logo center (48px/2) */
+            width: 2px;
+            height: 0;
+            background: var(--grid);
+            opacity: 0;
+        }
+
+        .logo-line-down.show {
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .logo-line-down.extend {
+            animation: lineDownGrow 0.5s ease-out forwards;
+        }
+
+        .logo-line-down.fade {
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        @keyframes lineDownGrow {
+            to { height: 80px; }
+        }
+
+        /* Nexora text next to logo with underline */
+        .palantir-side-text {
+            position: absolute;
+            left: 155px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+            font-weight: 400;
+            letter-spacing: 2px;
+            opacity: 0;
+        }
+
+        .palantir-side-text.show {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        /* Underline for Nexora text */
+        .palantir-underline {
+            position: absolute;
+            left: 155px;
+            top: calc(50% + 15px);
+            width: 0;
+            height: 1px;
+            background: var(--grid);
+        }
+
+        .palantir-underline.show {
+            animation: underlineGrow 0.5s ease-out forwards;
+        }
+
+        @keyframes underlineGrow {
+            to { width: 100px; }
+        }
+
+        /* Center state - logo above, text below (higher to avoid ring overlap) */
+        .logo-center.final-state {
+            top: 42% !important; /* Higher than center */
+        }
+
+        .logo-center.final-state .logo {
+            margin-bottom: 20px;
+        }
+
+        .palantir-center-text {
+            position: absolute;
+            left: 50%;
+            top: calc(42% + 90px); /* Lower, below logo and rings */
+            transform: translateX(-50%);
+            font-size: 24px;
+            font-weight: 400;
+            letter-spacing: 4px;
+            opacity: 0;
+        }
+
+        .palantir-center-text.show {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        /* Loading circle */
+        .loading-circle {
+            position: absolute;
+            left: 50%;
+            top: calc(42% + 130px);
+            transform: translateX(-50%);
+            width: 30px;
+            height: 30px;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-top-color: white;
+            border-radius: 50%;
+            opacity: 0;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-circle.show {
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        @keyframes spin {
+            to { transform: translateX(-50%) rotate(360deg); }
+        }
+
+        /* Loading modules */
+        .loading-modules {
+            position: absolute;
+            left: 50%;
+            top: calc(42% + 170px);
+            transform: translateX(-50%);
+            font-size: 14px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            opacity: 0;
+        }
+
+        .loading-modules.show {
+            opacity: 1;
+            transition: opacity 0.2s ease;
+        }
+
+        .module-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .module-status {
+            width: 6px;
+            height: 6px;
+            background: var(--grid);
+            border-radius: 50%;
+        }
+
+        .module-status.complete {
+            background: white;
+        }
+
+        /* Grid flicker out then gone */
+        .grid-container.flicker-out {
+            animation: flickerOut 1.5s ease-out forwards;
+        }
+
+        @keyframes flickerOut {
+            0% { opacity: 1; }
+            10% { opacity: 0.3; }
+            20% { opacity: 0.8; }
+            30% { opacity: 0.2; }
+            40% { opacity: 0.6; }
+            50% { opacity: 0.1; }
+            60% { opacity: 0.5; }
+            70% { opacity: 0.2; }
+            80% { opacity: 0.3; }
+            90% { opacity: 0.1; }
+            100% { opacity: 0; visibility: hidden; }
+        }
+
+        /* Bracket flicker out */
+        .bracket-container.flicker-out {
+            animation: flickerOut 1.2s ease-out forwards;
+        }
+
+        /* Side Nexora completely hidden */
+        .palantir-side-text.hidden,
+        .palantir-underline.hidden {
+            opacity: 0 !important;
+            visibility: hidden;
+        }
+
+        /* Final sequence - fade out current elements */
+        .logo-center.fade-out,
+        .palantir-center-text.fade-out,
+        .circle-outer.fade-out,
+        .circle-inner.fade-out {
+            opacity: 0 !important;
+            transition: opacity 0.8s ease;
+        }
+
+        /* Logo moves to center, slightly above for final sequence */
+        .logo-center.setup-state {
+            left: 50% !important;
+            top: 40% !important;
+            transform: translate(-50%, -50%) !important;
+            transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Environment setup text */
+        .env-setup-text {
+            position: absolute;
+            left: 50%;
+            top: 52%;
+            transform: translateX(-50%);
+            font-size: 16px;
+            font-weight: 300;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            opacity: 0;
+            white-space: nowrap;
+        }
+
+        .env-setup-text.show {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        .env-setup-text.fade-out {
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        /* Final big logo state - only at the very end */
+        .logo-center.final-big {
+            transform: translate(-50%, -50%) scale(2) !important;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .logo-center.final-big .circle-outer {
+            width: 320px;
+            height: 320px;
+        }
+
+        .logo-center.final-big .circle-inner {
+            width: 200px;
+            height: 200px;
+        }
+
+        /* Checkmark for complete state */
+        .checkmark {
+            position: absolute;
+            left: 50%;
+            top: 48%;
+            transform: translateX(-50%) scale(0);
+            width: 40px;
+            height: 40px;
+            opacity: 0;
+        }
+
+        .checkmark.show {
+            opacity: 1;
+            transform: translateX(-50%) scale(1);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .checkmark::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 20px;
+            width: 12px;
+            height: 3px;
+            background: white;
+            transform: rotate(45deg);
+            transform-origin: left center;
+        }
+
+        .checkmark::after {
+            content: '';
+            position: absolute;
+            left: 14px;
+            top: 26px;
+            width: 24px;
+            height: 3px;
+            background: white;
+            transform: rotate(-45deg);
+            transform-origin: left center;
+        }
+
+        /* Box that starts centered then expands to side */
+        .setup-box {
+            position: fixed;
+            left: 50%;
+            top: 52%;
+            transform: translate(-50%, -50%);
+            width: 260px;
+            height: 100px;
+            pointer-events: none;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .setup-box.expand-side {
+            width: 500px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .setup-box.fade-away {
+            opacity: 0;
+        }
+
+        .setup-box-line {
+            position: absolute;
+            background: var(--grid);
+        }
+
+        .setup-box-line.bottom {
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            transform: translateX(-50%);
+        }
+
+        .setup-box-line.bottom.grow {
+            animation: boxLineGrow 0.6s ease-out forwards;
+        }
+
+        .setup-box-line.left,
+        .setup-box-line.right {
+            bottom: 0;
+            width: 2px;
+            height: 0;
+        }
+
+        .setup-box-line.left { left: 0; }
+        .setup-box-line.right { right: 0; }
+
+        .setup-box-line.left.grow,
+        .setup-box-line.right.grow {
+            animation: boxSideGrow 0.5s ease-out 0.5s forwards;
+        }
+
+        .setup-box-line.top {
+            top: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            transform: translateX(-50%);
+        }
+
+        .setup-box-line.top.grow {
+            animation: boxLineGrow 0.6s ease-out 1s forwards;
+        }
+
+        @keyframes boxLineGrow {
+            to { width: 100%; }
+        }
+
+        @keyframes boxSideGrow {
+            to { height: 100%; }
+        }
+
+        /* Vertical sweep line through box */
+        .sweep-line {
+            position: absolute;
+            left: 50%;
+            top: 52%;
+            transform: translate(-50%, -50%);
+            width: 2px;
+            height: 0;
+            background: var(--grid);
+            opacity: 0;
+        }
+
+        .sweep-line.sweep-down {
+            opacity: 1;
+            animation: sweepDown 1s ease-out forwards;
+        }
+
+        @keyframes sweepDown {
+            0% { height: 0; }
+            50% { height: 100px; }
+            100% { height: 0; top: 62%; }
+        }
+
+        /* Final layout: logo and text matching dashboard.html exactly */
+        .final-platform {
+            position: fixed;
+            left: 10px;
+            top: 60px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 12px;
+            height: auto;
+            width: auto;
+            padding: 0;
+            opacity: 0;
+            z-index: 100;
+        }
+
+        .final-platform.show {
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .final-platform-logo {
+            width: 24px;
+            height: 24px;
+            position: relative;
+            opacity: 1;
+        }
+
+        /* Centered vertical layout - logo on top, text under */
+        .final-platform.centered-vertical {
+            left: 50%;
+            top: 52%;
+            transform: translate(-50%, -50%);
+            flex-direction: column;
+            gap: 15px;
+            height: auto;
+            width: auto;
+            padding: 0;
+            transition: none;
+        }
+
+        /* Horizontal layout for environment setup - logo left, text right with underline */
+        .final-platform.horizontal-side {
+            left: 50%;
+            top: 52%;
+            transform: translate(-50%, -50%);
+            flex-direction: row;
+            gap: 12px;
+            height: auto;
+            width: auto;
+            padding: 0;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .final-platform.horizontal-side .final-platform-text {
+            font-size: 18px;
+            letter-spacing: 3px;
+            margin-bottom: 0;
+            position: relative;
+        }
+
+        /* Underline for horizontal side text */
+        .final-platform.horizontal-side .final-platform-text::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--grid);
+            animation: sideTitleUnderline 0.8s ease-out forwards;
+        }
+
+        /* Bigger icon for final platform */
+        .final-platform-logo .palantir-icon {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .final-platform-logo .palantir-icon::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 18px;
+            height: 18px;
+            border: 3px solid white;
+            border-radius: 50%;
+        }
+
+        .final-platform-logo .palantir-icon::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 11px solid transparent;
+            border-right: 11px solid transparent;
+            border-top: 9px solid white;
+        }
+
+        .final-platform-text {
+            font-size: 22px;
+            font-weight: 300;
+            letter-spacing: 1px;
+            margin-bottom: 0;
+            white-space: nowrap;
+        }
+
+        .final-platform-text .gotham {
+            font-weight: 500;
+        }
+
+        /* Side title state - top left with underline */
+        .final-platform.side-title {
+            left: 30px;
+            top: 30px;
+            transform: none;
+            flex-direction: row;
+            gap: 12px;
+            height: auto;
+            width: auto;
+            padding: 0;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .final-platform.side-title .final-platform-logo {
+            width: 24px;
+            height: 24px;
+            margin-top: 0;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .final-platform.side-title .final-platform-text {
+            font-size: 18px;
+            letter-spacing: 3px;
+            margin-bottom: 0;
+            position: relative;
+        }
+
+        /* Underline for side title */
+        .final-platform.side-title .final-platform-text::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--grid);
+            animation: sideTitleUnderline 0.8s ease-out 0.5s forwards;
+        }
+
+        @keyframes sideTitleUnderline {
+            to { width: 100%; }
+        }
+
+        /* Horizontal line extending from title to right */
+        .title-line {
+            position: fixed;
+            left: 10px;
+            top: 92px;
+            width: calc(100vw - 30px);
+            height: 3px;
+            background: var(--grid);
+            opacity: 0;
+        }
+
+        .title-line.show {
+            opacity: 1;
+            animation: titleLineGrow 1s ease-out forwards;
+        }
+
+        @keyframes titleLineGrow {
+            to { width: calc(100vw - 30px); }
+        }
+
+        /* Vertical line from M in GOTHAM going down */
+        .vertical-line {
+            position: fixed;
+            left: 260px;
+            top: 97px;
+            width: 3px;
+            height: calc(100vh - 107px);
+            background: var(--grid);
+            opacity: 0;
+        }
+
+        .vertical-line.show {
+            opacity: 1;
+            transition: opacity 0.6s ease;
+        }
+
+        /* Main content area with categories */
+        .main-content {
+            position: fixed;
+            left: -245px;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 100px 30px 30px 280px;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .main-content.show {
+            opacity: 1;
+            pointer-events: auto;
+            transition: opacity 0.8s ease;
+        }
+
+        /* Category column */
+        .category-column {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            width: 200px;
+        }
+
+        .category-column.left {
+            margin-right: 0;
+        }
+
+        .category-column.right {
+            margin-left: 0;
+            margin-top: 40px;
+        }
+
+        .category-title {
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--grid-dim);
+        }
+
+        /* Tool title with underline */
+        .tool-item {
+            position: relative;
+            cursor: pointer;
+            padding-left: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .tool-item.selected {
+            padding-left: 20px;
+        }
+
+        /* Rectangle line indicator for selected item */
+        .tool-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 16px;
+            border: 1px solid var(--grid);
+            transition: all 0.3s ease;
+        }
+
+        .tool-item.selected::before {
+            width: 8px;
+            border-color: white;
+        }
+
+        .tool-item-name {
+            font-size: 16px;
+            font-weight: 400;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            transition: color 0.3s ease;
+        }
+
+        .tool-item:hover .tool-item-name {
+            color: white;
+        }
+
+        .tool-item.selected .tool-item-name {
+            color: white;
+        }
+
+        .tool-item-underline {
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--grid);
+            transition: width 0.3s ease;
+        }
+
+        .tool-item:hover .tool-item-underline {
+            width: 100%;
+        }
+
+        .tool-item.selected .tool-item-underline {
+            width: 100%;
+            background: white;
+        }
+
+        .tool-item-status {
+            font-size: 10px;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+            margin-top: 3px;
+        }
+
+        .tool-item-status.active {
+            color: #81c784;
+        }
+
+        .tool-item-status.standby {
+            color: #ffb74d;
+        }
+
+        /* Grid center with dots and X marks - enhanced background */
+        .grid-container {
+            position: absolute;
+            left: 50%; top: 50%;
+            transform: translate(-50%, -50%);
+            width: 380px; height: 220px;
+            opacity: 0;
+            background: radial-gradient(ellipse at center, rgba(255,255,255,0.03) 0%, transparent 70%);
+        }
+
+        .grid-container.show { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { to { opacity: 1; } }
+
+        .grid-dot {
+            position: absolute;
+            width: 6px; height: 6px;
+            opacity: 0;
+        }
+
+        /* Square dot */
+        .grid-dot.square::before {
+            content: '';
+            position: absolute;
+            width: 4px; height: 4px;
+            border: 1px solid var(--grid-dim);
+            left: 0; top: 0;
+        }
+
+        /* X mark */
+        .grid-dot.x::before,
+        .grid-dot.x::after {
+            content: '';
+            position: absolute;
+            width: 4px; height: 1px;
+            background: var(--grid-dim);
+            left: 1px; top: 2.5px;
+        }
+
+        .grid-dot.x::before { transform: rotate(45deg); }
+        .grid-dot.x::after { transform: rotate(-45deg); }
+
+        .grid-dot.show { animation: dotIn 0.3s ease-out forwards; }
+        @keyframes dotIn { to { opacity: 1; } }
+
+        .grid-dot.active.square::before { border-color: var(--grid); }
+        .grid-dot.active.x::before,
+        .grid-dot.active.x::after { background: var(--grid); }
+
+        /* Grid lines - horizontal and vertical */
+        .grid-line {
+            position: absolute;
+            background: var(--grid-dim);
+            transform-origin: left center;
+            opacity: 0;
+        }
+
+        .grid-line.horizontal {
+            height: 1px;
+        }
+
+        .grid-line.vertical {
+            width: 1px;
+            transform-origin: top center;
+        }
+
+        .grid-line.grow-h {
+            animation: growH 0.4s ease-out forwards;
+        }
+
+        .grid-line.grow-v {
+            animation: growV 0.4s ease-out forwards;
+        }
+
+        @keyframes growH {
+            from { width: 0; opacity: 1; }
+            to { opacity: 1; }
+        }
+
+        @keyframes growV {
+            from { height: 0; opacity: 1; }
+            to { opacity: 1; }
+        }
+
+        .grid-line.show { opacity: 1; }
+
+        /* Grid fills (gray squares and diagonals) */
+        .grid-fill {
+            position: absolute;
+            background: rgba(255,255,255,0.2);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .grid-fill.show { opacity: 1; }
+
+        /* Diagonal lines in cells */
+        .grid-diagonal {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .grid-diagonal.show { opacity: 1; }
+
+        .grid-diagonal::before,
+        .grid-diagonal::after {
+            content: '';
+            position: absolute;
+            width: 1px;
+            height: 140%;
+            background: rgba(255,255,255,0.25);
+            left: 50%;
+            top: -20%;
+        }
+
+        .grid-diagonal::before { transform: rotate(45deg); }
+        .grid-diagonal::after { transform: rotate(-45deg); }
+
+        /* Bigger bracket right side - animated build */
+        .bracket-container {
+            position: absolute;
+            right: 80px; top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            opacity: 0;
+        }
+
+        .bracket-container.show { animation: fadeIn 0.3s ease-out forwards; }
+
+        .bracket-number {
+            font-size: 16px;
+            color: var(--text);
+            order: 2;
+        }
+
+        .bracket {
+            width: 2px; height: 0;
+            background: var(--grid);
+            position: relative;
+            order: 1;
+        }
+
+        .bracket.animate {
+            animation: bracketGrow 0.7s ease-out forwards;
+        }
+
+        @keyframes bracketGrow {
+            to { height: 100px; }
+        }
+
+        .bracket::before, .bracket::after {
+            content: '';
+            position: absolute;
+            width: 0; height: 2px;
+            background: var(--grid);
+            right: 0;
+        }
+
+        .bracket.animate::before {
+            animation: bracketTop 0.5s ease-out 0.2s forwards;
+        }
+
+        .bracket.animate::after {
+            animation: bracketBottom 0.5s ease-out 0.2s forwards;
+        }
+
+        @keyframes bracketTop {
+            from {
+                width: 0;
+                top: 50%;
+            }
+            to {
+                width: 20px;
+                top: 0;
+            }
+        }
+
+        @keyframes bracketBottom {
+            from {
+                width: 0;
+                bottom: 50%;
+            }
+            to {
+                width: 20px;
+                bottom: 0;
+            }
+        }
+
+        /* Gotham center */
+        .gotham-text {
+            position: absolute;
+            left: 50%; top: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 72px;
+            font-weight: 300;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            opacity: 0;
+            z-index: 50;
+        }
+
+        .gotham-text.show { opacity: 1; }
+
+        .gotham-letter {
+            display: inline-block;
+            opacity: 0;
+        }
+
+        .gotham-letter.show {
+            animation: letterIn 0.3s ease-out forwards;
+        }
+
+        @keyframes letterIn {
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <!-- External titlebar -->
+    <div class="titlebar">
+        <div class="titlebar-drag-area">
+            <span class="titlebar-title">NEXORA GOTHAM PLATFORM</span>
+        </div>
+        <div class="window-controls">
+            <div class="window-control" id="minimizeBtn" onclick="if(window.electronAPI) window.electronAPI.minimizeWindow()">
+                <svg viewBox="0 0 10 1">
+                    <rect width="10" height="1" fill="white"/>
+                </svg>
+            </div>
+            <div class="window-control" id="maximizeBtn" onclick="if(window.electronAPI) window.electronAPI.maximizeWindow()">
+                <svg viewBox="0 0 10 10">
+                    <rect x="0" y="0" width="10" height="10" fill="none" stroke="white" stroke-width="1"/>
+                </svg>
+            </div>
+            <div class="window-control close" id="closeBtn" onclick="if(window.electronAPI) window.electronAPI.closeWindow()">
+                <svg viewBox="0 0 10 10">
+                    <path d="M0,0 L10,10 M10,0 L0,10" stroke="white" stroke-width="1"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Window border lines -->
+    <div class="window-border">
+        <div class="window-border-line top"></div>
+        <div class="window-border-line bottom"></div>
+        <div class="window-border-line left"></div>
+        <div class="window-border-line right"></div>
+    </div>
+
+    <div id="intro">
+        <!-- Logo center with rings -->
+        <div class="logo-center" id="logoCenter">
+            <div class="logo">
+                <div class="palantir-icon"></div>
+            </div>
+            <div class="circle circle-outer"></div>
+            <div class="circle circle-inner"></div>
+        </div>
+
+        <!-- Nexora text next to logo (for side position) -->
+        <div class="palantir-side-text" id="palantirSideText">NEXORA</div>
+        <div class="palantir-underline" id="palantirUnderline"></div>
+
+        <!-- Nexora text center (final position under logo) -->
+        <div class="palantir-center-text" id="palantirCenterText">NEXORA</div>
+
+        <!-- Loading circle -->
+        <div class="loading-circle" id="loadingCircle"></div>
+
+        <!-- Loading modules -->
+        <div class="loading-modules" id="loadingModules"></div>
+
+        <!-- Environment setup text -->
+        <div class="env-setup-text" id="envSetupText"></div>
+
+        <!-- Checkmark for complete -->
+        <div class="checkmark" id="checkmark"></div>
+
+        <!-- Box that forms around text -->
+        <div class="setup-box" id="setupBox">
+            <div class="setup-box-line bottom" id="boxBottom"></div>
+            <div class="setup-box-line left" id="boxLeft"></div>
+            <div class="setup-box-line right" id="boxRight"></div>
+            <div class="setup-box-line top" id="boxTop"></div>
+        </div>
+
+        <!-- Sweep line that removes text -->
+        <div class="sweep-line" id="sweepLine"></div>
+
+        <!-- Final logo and text -->
+        <div class="final-platform" id="finalPlatform">
+            <div class="final-platform-logo">
+                <div class="palantir-icon"></div>
+            </div>
+            <div class="final-platform-text">NEXORA <span class="gotham">GOTHAM</span> PLATFORM</div>
+        </div>
+
+        <!-- Horizontal line from title to right -->
+        <div class="title-line" id="titleLine"></div>
+
+        <!-- Vertical line from M in GOTHAM going down -->
+        <div class="vertical-line" id="verticalLine"></div>
+
+        <!-- Main content with categories -->
+        <div class="main-content" id="mainContent">
+            <!-- Left column - Applications -->
+            <div class="category-column left">
+                <div class="category-title">Applications</div>
+                <div class="tool-item">
+                    <div class="tool-item-name">Nmap</div>
+                    <div class="tool-item-underline"></div>
+                    <div class="tool-item-status active">Active</div>
+                </div>
+                <div class="tool-item">
+                    <div class="tool-item-name">Metasploit</div>
+                    <div class="tool-item-underline"></div>
+                    <div class="tool-item-status standby">Standby</div>
+                </div>
+                <div class="tool-item">
+                    <div class="tool-item-name">Burp Suite</div>
+                    <div class="tool-item-underline"></div>
+                    <div class="tool-item-status standby">Standby</div>
+                </div>
+            </div>
+
+            <!-- Right column - Analytics -->
+            <div class="category-column right">
+                <div class="category-title">Analytics</div>
+                <div class="tool-item">
+                    <div class="tool-item-name">Maltego</div>
+                    <div class="tool-item-underline"></div>
+                    <div class="tool-item-status active">Active</div>
+                </div>
+                <div class="tool-item">
+                    <div class="tool-item-name">AI Assistant</div>
+                    <div class="tool-item-underline"></div>
+                    <div class="tool-item-status standby">Standby</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grid center -->
+        <div class="grid-container" id="gridContainer"></div>
+
+        <!-- Bracket right -->
+        <div class="bracket-container" id="bracketContainer">
+            <div class="bracket-number">→ 21</div>
+            <div class="bracket" id="bracket"></div>
+        </div>
+
+        <!-- Gotham center -->
+        <div class="gotham-text" id="gothamText"></div>
+    </div>
+
+    <script>
+        function wait(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        async function playIntro() {
+            const logoCenter = document.getElementById('logoCenter');
+            const palantirSideText = document.getElementById('palantirSideText');
+            const palantirUnderline = document.getElementById('palantirUnderline');
+            const palantirCenterText = document.getElementById('palantirCenterText');
+            const gridContainer = document.getElementById('gridContainer');
+            const bracketContainer = document.getElementById('bracketContainer');
+            const bracket = document.getElementById('bracket');
+            const gothamText = document.getElementById('gothamText');
+            const loadingCircle = document.getElementById('loadingCircle');
+            const loadingModules = document.getElementById('loadingModules');
+
+            // Create aligned grid with squares and X marks
+            const gridCols = 10;
+            const gridRows = 6;
+            const cellW = 36;
+            const cellH = 32;
+            const startX = 20;
+            const startY = 20;
+
+            // Grid pattern - aligned rows
+            const gridPattern = [
+                // Row 0
+                {r: 0, c: 1, type: 'square'}, {r: 0, c: 2, type: 'x'}, {r: 0, c: 3, type: 'square'}, {r: 0, c: 4, type: 'square'},
+                // Row 1 - longer
+                {r: 1, c: 0, type: 'square'}, {r: 1, c: 1, type: 'square'}, {r: 1, c: 2, type: 'x'}, {r: 1, c: 3, type: 'square'}, 
+                {r: 1, c: 4, type: 'square'}, {r: 1, c: 5, type: 'square'}, {r: 1, c: 6, type: 'square'}, {r: 1, c: 7, type: 'square'},
+                // Row 2 - longest
+                {r: 2, c: 0, type: 'x'}, {r: 2, c: 1, type: 'square'}, {r: 2, c: 2, type: 'square'}, {r: 2, c: 3, type: 'x'}, 
+                {r: 2, c: 4, type: 'square'}, {r: 2, c: 5, type: 'square'}, {r: 2, c: 6, type: 'square'}, {r: 2, c: 7, type: 'square'}, {r: 2, c: 8, type: 'x'},
+                // Row 3
+                {r: 3, c: 1, type: 'square'}, {r: 3, c: 2, type: 'x'}, {r: 3, c: 3, type: 'x'}, {r: 3, c: 4, type: 'x'}, 
+                {r: 3, c: 5, type: 'square'}, {r: 3, c: 6, type: 'square'}, {r: 3, c: 7, type: 'square'}, {r: 3, c: 8, type: 'square'},
+                // Row 4
+                {r: 4, c: 2, type: 'square'}, {r: 4, c: 3, type: 'x'}, {r: 4, c: 4, type: 'x'}, {r: 4, c: 5, type: 'x'}, 
+                {r: 4, c: 6, type: 'square'}, {r: 4, c: 8, type: 'x'},
+                // Row 5 - extra row for tree extension
+                {r: 5, c: 3, type: 'square'}, {r: 5, c: 4, type: 'x'}, {r: 5, c: 5, type: 'square'}, {r: 5, c: 7, type: 'x'}
+            ];
+
+            // Create dots
+            for (const dot of gridPattern) {
+                const div = document.createElement('div');
+                div.className = `grid-dot ${dot.type}`;
+                div.style.left = (dot.c * cellW + startX) + 'px';
+                div.style.top = (dot.r * cellH + startY) + 'px';
+                gridContainer.appendChild(div);
+            }
+
+            // Wait for circles to appear
+            await wait(1500);
+
+            // Show bracket container and animate bracket
+            bracketContainer.classList.add('show');
+            await wait(100);
+            bracket.classList.add('animate');
+
+            await wait(800);
+
+            // Move logo to left (rings fade via CSS)
+            logoCenter.classList.add('move-left');
+
+            await wait(600);
+
+            // Show grid
+            gridContainer.classList.add('show');
+
+            // Show dots
+            const dots = gridContainer.querySelectorAll('.grid-dot');
+            for (let i = 0; i < dots.length; i++) {
+                await wait(25);
+                dots[i].classList.add('show');
+                dots[i].classList.add('active');
+            }
+
+            // Grow horizontal lines
+            const hLines = [
+                // Row 0 horizontal
+                {r: 0, c: 1, len: 3},
+                // Row 1 - longer horizontal spans
+                {r: 1, c: 0, len: 4}, {r: 1, c: 3, len: 5},
+                // Row 2 - longest spans  
+                {r: 2, c: 0, len: 5}, {r: 2, c: 4, len: 5},
+                // Row 3
+                {r: 3, c: 1, len: 4}, {r: 3, c: 5, len: 4},
+                // Row 4
+                {r: 4, c: 2, len: 5},
+                // Row 5
+                {r: 5, c: 3, len: 3}
+            ];
+
+            for (const line of hLines) {
+                const lineDiv = document.createElement('div');
+                lineDiv.className = 'grid-line horizontal grow-h';
+                lineDiv.style.width = (line.len * cellW) + 'px';
+                lineDiv.style.left = (line.c * cellW + startX + 3) + 'px';
+                lineDiv.style.top = (line.r * cellH + startY + 3) + 'px';
+                gridContainer.appendChild(lineDiv);
+                await wait(60);
+            }
+
+            // Show Nexora text next to logo during grid animation
+            palantirSideText.classList.add('show');
+            await wait(200);
+            palantirUnderline.classList.add('show');
+
+            // Fill cells
+            const fills = [
+                {r: 0, c: 3, type: 'square'},
+                {r: 1, c: 4, type: 'diagonal'},
+                {r: 2, c: 5, type: 'square'},
+                {r: 2, c: 2, type: 'diagonal'},
+                {r: 3, c: 6, type: 'square'},
+                {r: 4, c: 4, type: 'diagonal'}
+            ];
+
+            for (const pos of fills) {
+                const cellWpx = (cellW - 8) + 'px';
+                const cellHpx = (cellH - 8) + 'px';
+                const leftPos = (pos.c * cellW + startX + 7) + 'px';
+                const topPos = (pos.r * cellH + startY + 7) + 'px';
+
+                const container = document.createElement('div');
+                container.style.position = 'absolute';
+                container.style.width = cellWpx;
+                container.style.height = cellHpx;
+                container.style.left = leftPos;
+                container.style.top = topPos;
+
+                if (pos.type === 'square') {
+                    const fill = document.createElement('div');
+                    fill.className = 'grid-fill';
+                    fill.style.width = '100%';
+                    fill.style.height = '100%';
+                    container.appendChild(fill);
+                    gridContainer.appendChild(container);
+                    await wait(80);
+                    fill.classList.add('show');
+                } else {
+                    const diag = document.createElement('div');
+                    diag.className = 'grid-diagonal';
+                    container.appendChild(diag);
+                    gridContainer.appendChild(container);
+                    await wait(80);
+                    diag.classList.add('show');
+                }
+            }
+
+            // Gotham appears
+            await scrambleGotham(gothamText, 'GOTHAM', 1500);
+
+            await wait(2000);
+
+            // Gotham goes out - shorten characters with random
+            await unscrambleGothamShorten(gothamText, 1500);
+
+            await wait(300);
+
+            // Grid flickers out of existence
+            gridContainer.classList.add('flicker-out');
+
+            // Bracket flickers out
+            bracketContainer.classList.add('flicker-out');
+
+            await wait(1800);
+
+            // Force hide after flicker
+            gridContainer.style.visibility = 'hidden';
+            bracketContainer.style.visibility = 'hidden';
+
+            // Move to center: hide side text, logo above, rings appear
+            palantirSideText.classList.add('hidden');
+            palantirUnderline.classList.add('hidden');
+            palantirUnderline.style.width = '0';
+            palantirUnderline.style.opacity = '0';
+            logoCenter.classList.remove('move-left');
+            logoCenter.classList.add('final-state');
+            logoCenter.style.left = '50%';
+            logoCenter.style.transform = 'translate(-50%, -50%)';
+
+            // Show center text below
+            palantirCenterText.classList.add('show');
+
+            await wait(200);
+
+            // Show loading circle
+            loadingCircle.classList.add('show');
+
+            await wait(100);
+
+            // Show loading modules - each appears then disappears when complete
+            loadingModules.classList.add('show');
+
+            const modules = [
+                'Initializing core systems...',
+                'Loading data modules...',
+                'Establishing secure connection...',
+                'Verifying user credentials...',
+                'Syncing with database...',
+                'Dashboard ready'
+            ];
+
+            for (const moduleText of modules) {
+                const moduleDiv = document.createElement('div');
+                moduleDiv.className = 'module-item';
+                moduleDiv.innerHTML = `<div class="module-status"></div><span>${moduleText}</span>`;
+                loadingModules.appendChild(moduleDiv);
+
+                // Wait for module to "load"
+                await wait(400);
+
+                // Mark as complete
+                moduleDiv.querySelector('.module-status').classList.add('complete');
+
+                // Brief pause then remove
+                await wait(200);
+                moduleDiv.style.opacity = '0';
+                moduleDiv.style.transition = 'opacity 0.2s ease';
+                await wait(200);
+                moduleDiv.remove();
+            }
+
+            // Hide loading circle and modules container
+            loadingCircle.style.opacity = '0';
+            loadingModules.style.opacity = '0';
+
+            await wait(500);
+
+            // Final sequence: fade out text and rings
+            palantirCenterText.classList.add('fade-out');
+            logoCenter.querySelector('.circle-outer').classList.add('fade-out');
+            logoCenter.querySelector('.circle-inner').classList.add('fade-out');
+
+            await wait(800);
+
+            // Move logo to center, slightly above
+            logoCenter.classList.remove('final-state');
+            logoCenter.classList.add('setup-state');
+
+            await wait(1000);
+
+            // Show environment setup messages
+            const envSetupText = document.getElementById('envSetupText');
+            const checkmark = document.getElementById('checkmark');
+            const setupBox = document.getElementById('setupBox');
+            const boxBottom = document.getElementById('boxBottom');
+            const boxLeft = document.getElementById('boxLeft');
+            const boxRight = document.getElementById('boxRight');
+            const boxTop = document.getElementById('boxTop');
+            const sweepLine = document.getElementById('sweepLine');
+            const finalPlatform = document.getElementById('finalPlatform');
+
+            // First grow the logo bigger
+            logoCenter.classList.add('final-big');
+            await wait(800);
+
+            // Securing your environment (with big logo)
+            envSetupText.textContent = 'Securing your environment';
+            envSetupText.classList.add('show');
+
+            await wait(2000);
+
+            // Fade out and change text
+            envSetupText.classList.add('fade-out');
+            await wait(500);
+            envSetupText.classList.remove('show', 'fade-out');
+
+            // Setting your environment (with big logo)
+            envSetupText.textContent = 'Setting up your environment';
+            envSetupText.classList.add('show');
+
+            await wait(2000);
+
+            // Fade out text and logo
+            envSetupText.classList.add('fade-out');
+            logoCenter.classList.add('fade-out');
+            await wait(500);
+            envSetupText.classList.remove('show', 'fade-out');
+
+            // Box forms around empty space (no text, just checkmark)
+            checkmark.classList.add('show');
+            await wait(500);
+
+            // Box forms from bottom up (small, centered)
+            boxBottom.classList.add('grow');
+            await wait(200);
+            boxLeft.classList.add('grow');
+            boxRight.classList.add('grow');
+            await wait(200);
+            boxTop.classList.add('grow');
+
+            await wait(1000);
+
+            // Vertical sweep line goes through box, removing checkmark
+            sweepLine.classList.add('sweep-down');
+            checkmark.style.opacity = '0';
+            checkmark.style.transition = 'opacity 0.3s ease';
+
+            await wait(1000);
+
+            // Hide checkmark
+            checkmark.style.visibility = 'hidden';
+
+            await wait(800);
+
+            // Box expands to side
+            setupBox.classList.add('expand-side');
+
+            await wait(800);
+
+            // Fade in text in box at center (no movement, just opacity fade)
+            finalPlatform.classList.add('centered-vertical');
+            finalPlatform.classList.add('show');
+
+            await wait(2000);
+
+            // Box fades away first
+            setupBox.classList.add('fade-away');
+
+            await wait(800);
+
+            // Text moves from center to corner
+            finalPlatform.classList.remove('centered-vertical');
+
+            await wait(300);
+
+            // Horizontal line extends from title to right
+            const titleLine = document.getElementById('titleLine');
+            titleLine.classList.add('show');
+
+            await wait(1000);
+
+            // Vertical line from M in GOTHAM goes down to bottom
+            const verticalLine = document.getElementById('verticalLine');
+            verticalLine.classList.add('show');
+
+            await wait(1000);
+
+            // Show main content with categories
+            const mainContent = document.getElementById('mainContent');
+            mainContent.classList.add('show');
+
+            // Add click handlers for tool items
+            const toolItems = document.querySelectorAll('.tool-item');
+            toolItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    // Remove selected from all items
+                    toolItems.forEach(ti => ti.classList.remove('selected'));
+                    // Add selected to clicked item
+                    item.classList.add('selected');
+
+                    // Get tool name and map to HTML file
+                    const toolName = item.querySelector('.tool-item-name').textContent.toLowerCase().replace(/\s+/g, '');
+                    const toolFiles = {
+                        'nmap': 'nmap.html',
+                        'metasploit': 'metasploit.html',
+                        'burpsuite': 'burpsuite.html',
+                        'maltego': 'maltego.html',
+                        'aiassistant': 'ai.html'
+                    };
+
+                    // Navigate to tool page
+                    if (toolFiles[toolName]) {
+                        window.location.href = toolFiles[toolName];
+                    }
+                });
+            });
+
+            // Redirect to dashboard.html after animation completes
+            await wait(2000);
+            window.location.href = 'dashboard.html';
+        }
+
+        async function scrambleGotham(element, finalText, duration) {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*';
+            element.innerHTML = '';
+            element.classList.add('show');
+
+            // Create letter spans
+            const letters = finalText.split('');
+            const letterSpans = [];
+
+            for (let i = 0; i < letters.length; i++) {
+                const span = document.createElement('span');
+                span.className = 'gotham-letter';
+                span.innerText = chars[Math.floor(Math.random() * chars.length)];
+                element.appendChild(span);
+                letterSpans.push(span);
+            }
+
+            // Scramble animation
+            const startTime = Date.now();
+            const endTime = startTime + duration;
+
+            while (Date.now() < endTime) {
+                const progress = (Date.now() - startTime) / duration;
+
+                for (let i = 0; i < letters.length; i++) {
+                    const letterProgress = (progress * letters.length) - i;
+
+                    if (letterProgress > 1) {
+                        // Letter finalized
+                        if (letterSpans[i].innerText !== letters[i]) {
+                            letterSpans[i].innerText = letters[i];
+                            letterSpans[i].classList.add('show');
+                        }
+                    } else if (letterProgress > 0) {
+                        // Letter scrambling - occasional random char
+                        letterSpans[i].innerText = Math.random() > 0.5 ? letters[i] : chars[Math.floor(Math.random() * chars.length)];
+                        letterSpans[i].classList.add('show');
+                    } else {
+                        // Still random
+                        letterSpans[i].innerText = chars[Math.floor(Math.random() * chars.length)];
+                    }
+                }
+
+                await wait(50);
+            }
+
+            // Ensure all letters are correct at end
+            for (let i = 0; i < letters.length; i++) {
+                letterSpans[i].innerText = letters[i];
+                letterSpans[i].classList.add('show');
+            }
+        }
+
+        async function unscrambleGothamShorten(element, duration) {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*';
+            const letterSpans = element.querySelectorAll('.gotham-letter');
+
+            if (letterSpans.length === 0) return;
+
+            const originalText = 'GOTHAM';
+            const totalLetters = letterSpans.length;
+            const startTime = Date.now();
+            const endTime = startTime + duration;
+
+            // Gradually reduce the number of visible letters from the end
+            while (Date.now() < endTime) {
+                const progress = (Date.now() - startTime) / duration;
+                const lettersToShow = Math.max(1, Math.floor(totalLetters * (1 - progress)));
+
+                // Hide letters from the end
+                for (let i = 0; i < totalLetters; i++) {
+                    if (i >= lettersToShow) {
+                        letterSpans[i].style.opacity = '0';
+                    } else {
+                        // Show random characters for visible letters
+                        letterSpans[i].style.opacity = '1';
+                        letterSpans[i].innerText = chars[Math.floor(Math.random() * chars.length)];
+                    }
+                }
+
+                await wait(100);
+            }
+
+            // All letters hidden at end
+            for (let i = 0; i < totalLetters; i++) {
+                letterSpans[i].style.opacity = '0';
+            }
+            element.style.opacity = '0';
+        }
+
+        window.addEventListener('load', playIntro);
+    </script>
+</body>
+</html>

@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recon / Pentest - NEXORA GOTHAM PLATFORM</title>
+    <link rel="stylesheet" href="shared.css">
+    <style>
+        /* Tool-specific styles */
+        .recon-container {
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .recon-header {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--grid-dim);
+        }
+        
+        .recon-header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text);
+        }
+        
+        .recon-header p {
+            color: var(--text-dim);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .warning-banner {
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            border-radius: 4px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .warning-banner::before {
+            content: "⚠️";
+            font-size: 18px;
+        }
+        
+        .warning-banner span {
+            color: #ff6b6b;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        .recon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .recon-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--grid-dim);
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .recon-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--grid);
+            transform: translateY(-2px);
+        }
+        
+        .recon-card.active {
+            background: rgba(129, 199, 132, 0.1);
+            border-color: var(--status-active);
+        }
+        
+        .recon-card-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--grid);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            font-size: 20px;
+        }
+        
+        .recon-card-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+        
+        .recon-card-desc {
+            font-size: 13px;
+            color: var(--text-dim);
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+        
+        .recon-card-status {
+            font-size: 11px;
+            color: var(--status-standby);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .recon-card.status-active .recon-card-status {
+            color: var(--status-active);
+        }
+        
+        .control-panel {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--grid-dim);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .control-panel h3 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: var(--text);
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .input-group input {
+            flex: 1;
+            min-width: 200px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--grid-dim);
+            color: var(--text);
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--grid);
+        }
+        
+        .btn {
+            background: var(--grid);
+            color: var(--text);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: var(--grid);
+            opacity: 0.8;
+        }
+        
+        .btn-primary {
+            background: var(--status-active);
+            color: var(--bg);
+        }
+        
+        .btn-primary:hover {
+            background: #66bb6a;
+        }
+        
+        .results-panel {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--grid-dim);
+            border-radius: 8px;
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .results-panel h3 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: var(--text);
+        }
+        
+        .result-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--grid-dim);
+            border-radius: 4px;
+            padding: 12px;
+            margin-bottom: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: var(--text);
+        }
+        
+        .progress-bar {
+            height: 4px;
+            background: var(--grid-dim);
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--status-active);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--status-standby);
+            margin-right: 8px;
+        }
+        
+        .status-indicator.active {
+            background: var(--status-active);
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--grid-dim);
+        }
+        
+        .tab {
+            padding: 10px 16px;
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+        
+        .tab:hover {
+            color: var(--text);
+        }
+        
+        .tab.active {
+            color: var(--text);
+            border-bottom-color: var(--status-active);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .integration-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--text-dim);
+        }
+        
+        .integration-status .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--status-standby);
+        }
+        
+        .integration-status.connected .status-dot {
+            background: var(--status-active);
+        }
+    </style>
+</head>
+<body>
+    <div class="tool-content">
+        <div class="recon-container">
+            <div class="recon-header">
+                <h1>Recon / Pentest</h1>
+                <p>Comprehensive reconnaissance and penetration testing toolkit for authorized security assessments.</p>
+            </div>
+            
+            <div class="warning-banner">
+                <span>For offensive/defensive-authorized use only. Ensure proper authorization before scanning.</span>
+            </div>
+            
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('discovery')">Asset Discovery</button>
+                <button class="tab" onclick="switchTab('enumeration')">Enumeration</button>
+                <button class="tab" onclick="switchTab('fingerprinting')">Fingerprinting</button>
+                <button class="tab" onclick="switchTab('vulnerability')">Vulnerability</button>
+                <button class="tab" onclick="switchTab('automation')">Automation</button>
+            </div>
+            
+            <!-- Asset Discovery Tab -->
+            <div id="discovery" class="tab-content active">
+                <div class="recon-grid">
+                    <div class="recon-card" onclick="selectTool('asset-discovery')">
+                        <div class="recon-card-icon">🔍</div>
+                        <div class="recon-card-title">Asset Discovery</div>
+                        <div class="recon-card-desc">Discover all assets associated with target domain including subdomains, IPs, and cloud infrastructure.</div>
+                        <div class="recon-card-status">Ready</div>
+                    </div>
+                    
+                    <div class="recon-card" onclick="selectTool('subdomain-enum')">
+                        <div class="recon-card-icon">🌐</div>
+                        <div class="recon-card-title">Subdomain Enumeration</div>
+                        <div class="recon-card-desc">Comprehensive subdomain discovery using multiple techniques and sources.</div>
+                        <div class="recon-card-status">Ready</div>
+                    </div>
+                    
+                    <div class="recon-card" onclick="selectTool('dns-whois')">
+                        <div class="recon-card-icon">📋</div>
+                        <div class="recon-card-title">DNS/WHOIS</div>
+                        <div class="recon-card-desc">DNS record enumeration and WHOIS information gathering.</div>
+                        <div class="recon-card-status">Ready</div>
+                    </div>
+                    
+                    <div class="recon-card" onclick="selectTool('port-scan')">
+                        <div class="recon-card-icon">🔌</div>
+                        <div class="recon-card-title">Port/Service Inventory</div>
+                        <div class="recon-card-desc">Comprehensive port scanning and service identification.</div>
+                        <div class="recon-card-status">Ready</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Enumeration Tab -->
+            <div id="enumeration" class="tab-content">
+                <div class="recon-grid">
+                    <div class="recon-card" onclick="selectTool('web-crawler')">
+                        <div class="recon-card-icon">🕷️</div>
+                        <div class="recon-card-title">Web Crawler</div>
+                        <div class="recon-card-desc">Discover endpoints, directories, and hidden content through intelligent crawling.</div>
+                        <div class="recon-card-status">Ready</div>
+                    </div>
+                    
+                    <div class="recon-card" onclick="selectTool('api-mapper')">
+                        <div class="recon-card-icon">🔧</div>
+                        <div class="recon-card-title">API Schema Mapper</div>
+                        <div class="recon-card-desc">Discover and map REST API endpoints and schemas.</div>
+                        <div class="recon-card-status">Ready</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Fingerprinting Tab -->
+            <div id="fingerprinting" class="tab-content">
+                <div class="recon-grid">
+                    <div class="recon-card" onclick="selectTool('http-fingerprint')">
+                        <div class="recon-card-icon">🌍</div>
+                        <div class="recon-card-title">HTTP Fingerprinting</div>
+                        <div class="recon-card-desc">Detailed HTTP service fingerprinting and header analysis.</div>
+                        <div class="recon-card-status">Ready</div>
+                    </div>
+                    
+                    <div class="recon-card" onclick="selectTool('tls-analysis')">
+                        <div class="recon-card-icon">🔐</div>
+                        <div class="recon-card-title">TLS Analysis</div>
+                        <div class="recon-card-desc">SSL/TLS configuration analysis and certificate inspection.</div>
+                        <div class="recon-card-status">Ready</div>
+                    </div>
+                    
+                    <div class="recon-card" onclick="selectTool('tech-detection')">
+                        <div class="recon-card-icon">⚙️</div>
+                        <div class="recon-card-title">Technology Detection</div>
+                        <div class="recon-card-desc">Identify web technologies, frameworks, and software versions.</div>
+                        <div class="recon-card-status">Ready</div>
+                    </div>
+                    
+                    <div class="recon-card" onclick="selectTool('screenshot')">
+                        <div class="recon-card-icon">📸</div>
+                        <div class="recon-card-title">Screenshot Capture</div>
+                        <div class="recon-card-desc">Automated screenshot capture of web services and applications.</div>
+                        <div class="recon-card-status">Ready</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Vulnerability Tab -->
+            <div id="vulnerability" class="tab-content">
+                <div class="recon-grid">
+                    <div class="recon-card" onclick="selectTool('cve-enrichment')">
+                        <div class="recon-card-icon">🛡️</div>
+                        <div class="recon-card-title">CVE Enrichment</div>
+                        <div class="recon-card-desc">Enrich discovered technologies with relevant CVE information.</div>
+                        <div class="recon-card-status">Ready</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Automation Tab -->
+            <div id="automation" class="tab-content">
+                <div class="recon-grid">
+                    <div class="recon-card" onclick="selectTool('diff-snapshots')">
+                        <div class="recon-card-icon">📊</div>
+                        <div class="recon-card-title">Diff Snapshots</div>
+                        <div class="recon-card-desc">Compare scan results over time to detect changes.</div>
+                        <div class="recon-card-status">Ready</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Control Panel -->
+            <div class="control-panel" id="controlPanel" style="display: none;">
+                <h3 id="toolTitle">Select a tool</h3>
+                <div class="input-group">
+                    <input type="text" id="targetInput" placeholder="Enter target (domain, IP, or URL)">
+                    <button class="btn btn-primary" onclick="runTool()">Run Scan</button>
+                    <button class="btn" onclick="stopTool()">Stop</button>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressBar"></div>
+                </div>
+                <div class="integration-status" id="integrationStatus">
+                    <span class="status-dot"></span>
+                    <span>Checking integrations...</span>
+                </div>
+            </div>
+            
+            <!-- Results Panel -->
+            <div class="results-panel" id="resultsPanel" style="display: none;">
+                <h3>Results</h3>
+                <div id="resultsContainer">
+                    <div class="result-item">No results yet. Select a tool and run a scan.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="shared.js"></script>
+    <script>
+        let currentTool = null;
+        let isRunning = false;
+        
+        // Tool integrations status
+        const integrations = {
+            'nmap': { name: 'Nmap', status: 'checking' },
+            'rustscan': { name: 'RustScan', status: 'checking' },
+            'amass': { name: 'OWASP Amass', status: 'checking' },
+            'httpx': { name: 'httpx', status: 'checking' },
+            'nuclei': { name: 'Nuclei', status: 'checking' }
+        };
+        
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all tab buttons
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked tab button
+            event.target.classList.add('active');
+        }
+        
+        function selectTool(toolName) {
+            // Remove active class from all cards
+            document.querySelectorAll('.recon-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            
+            // Add active class to selected card
+            event.currentTarget.classList.add('active');
+            
+            currentTool = toolName;
+            updateControlPanel(toolName);
+        }
+        
+        function updateControlPanel(toolName) {
+            const panel = document.getElementById('controlPanel');
+            const title = document.getElementById('toolTitle');
+            const resultsPanel = document.getElementById('resultsPanel');
+            
+            panel.style.display = 'block';
+            resultsPanel.style.display = 'block';
+            
+            const toolTitles = {
+                'asset-discovery': 'Asset Discovery',
+                'subdomain-enum': 'Subdomain Enumeration',
+                'dns-whois': 'DNS/WHOIS Lookup',
+                'port-scan': 'Port/Service Scan',
+                'web-crawler': 'Web Crawler',
+                'api-mapper': 'API Schema Mapper',
+                'http-fingerprint': 'HTTP Fingerprinting',
+                'tls-analysis': 'TLS Analysis',
+                'tech-detection': 'Technology Detection',
+                'screenshot': 'Screenshot Capture',
+                'cve-enrichment': 'CVE Enrichment',
+                'diff-snapshots': 'Diff Snapshots'
+            };
+            
+            title.textContent = toolTitles[toolName] || 'Select a tool';
+            checkIntegrations(toolName);
+        }
+        
+        function checkIntegrations(toolName) {
+            const status = document.getElementById('integrationStatus');
+            const requiredIntegrations = getRequiredIntegrations(toolName);
+            
+            if (requiredIntegrations.length === 0) {
+                status.innerHTML = '<span class="status-dot"></span><span>No external integrations required</span>';
+                return;
+            }
+            
+            status.innerHTML = '<span class="status-dot"></span><span>Checking integrations...</span>';
+            
+            // Simulate integration check
+            setTimeout(() => {
+                const connectedCount = requiredIntegrations.filter(i => Math.random() > 0.3).length;
+                const totalCount = requiredIntegrations.length;
+                
+                if (connectedCount === totalCount) {
+                    status.className = 'integration-status connected';
+                    status.innerHTML = `<span class="status-dot"></span><span>All ${totalCount} integrations connected</span>`;
+                } else {
+                    status.className = 'integration-status';
+                    status.innerHTML = `<span class="status-dot"></span><span>${connectedCount}/${totalCount} integrations connected</span>`;
+                }
+            }, 1000);
+        }
+        
+        function getRequiredIntegrations(toolName) {
+            const integrationMap = {
+                'asset-discovery': ['amass', 'nmap'],
+                'subdomain-enum': ['amass'],
+                'dns-whois': [],
+                'port-scan': ['nmap', 'rustscan'],
+                'web-crawler': ['httpx'],
+                'api-mapper': ['httpx'],
+                'http-fingerprint': ['httpx'],
+                'tls-analysis': ['httpx'],
+                'tech-detection': ['httpx'],
+                'screenshot': [],
+                'cve-enrichment': ['nuclei'],
+                'diff-snapshots': []
+            };
+            
+            return integrationMap[toolName] || [];
+        }
+        
+        async function runTool() {
+            if (!currentTool || isRunning) return;
+            
+            const target = document.getElementById('targetInput').value.trim();
+            if (!target) {
+                alert('Please enter a target');
+                return;
+            }
+            
+            isRunning = true;
+            updateProgress(0);
+            clearResults();
+            
+            const resultsContainer = document.getElementById('resultsContainer');
+            resultsContainer.innerHTML = '<div class="result-item">Starting scan...</div>';
+            
+            // Simulate tool execution
+            for (let i = 0; i <= 100; i += 10) {
+                if (!isRunning) break;
+                
+                updateProgress(i);
+                
+                if (i === 20) {
+                    addResult(`Initializing ${currentTool}...`);
+                } else if (i === 40) {
+                    addResult(`Scanning ${target}...`);
+                } else if (i === 60) {
+                    addResult(`Discovering assets...`);
+                } else if (i === 80) {
+                    addResult(`Analyzing results...`);
+                } else if (i === 100) {
+                    addResult(`Scan completed for ${target}`);
+                    addResult(`Found ${Math.floor(Math.random() * 50) + 10} items`);
+                }
+                
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+            
+            isRunning = false;
+            updateProgress(0);
+        }
+        
+        function stopTool() {
+            isRunning = false;
+            addResult('Scan stopped by user');
+            updateProgress(0);
+        }
+        
+        function updateProgress(percent) {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.style.width = percent + '%';
+        }
+        
+        function addResult(message) {
+            const resultsContainer = document.getElementById('resultsContainer');
+            const resultItem = document.createElement('div');
+            resultItem.className = 'result-item';
+            resultItem.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            resultsContainer.appendChild(resultItem);
+            resultsContainer.scrollTop = resultsContainer.scrollHeight;
+        }
+        
+        function clearResults() {
+            const resultsContainer = document.getElementById('resultsContainer');
+            resultsContainer.innerHTML = '';
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check integrations on load
+            setTimeout(() => {
+                Object.keys(integrations).forEach(tool => {
+                    integrations[tool].status = Math.random() > 0.3 ? 'connected' : 'disconnected';
+                });
+            }, 1000);
+        });
+    </script>
+    <script>initShell('recon.html');</script>
+</body>
+</html>
