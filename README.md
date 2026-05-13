@@ -1,6 +1,6 @@
 # Nexora Gotham Platform
 
-Authorized penetration testing platform with Nexora-inspired cinematic dashboard.
+Authorized penetration testing platform with Nexora cinematic dashboard.
 Built with Node.js, TypeScript, Electron, and a modular API architecture.
 
 ---
