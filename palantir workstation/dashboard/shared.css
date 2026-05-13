@@ -1,0 +1,408 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+    --bg: #18181c;
+    --text: #ffffff;
+    --text-dim: rgba(255,255,255,0.4);
+    --grid: rgba(255,255,255,0.3);
+    --grid-dim: rgba(255,255,255,0.15);
+    --status-active: #81c784;
+    --status-standby: #ffb74d;
+}
+
+body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* ─── Titlebar ─────────────────────────────────────────────── */
+.titlebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 32px;
+    background: #0d0d10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 10000;
+    -webkit-app-region: drag;
+}
+
+.titlebar-drag-area {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding-left: 12px;
+}
+
+.titlebar-title {
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    color: var(--text-dim);
+}
+
+.window-controls {
+    display: flex;
+    height: 100%;
+    -webkit-app-region: no-drag;
+}
+
+.window-control {
+    width: 46px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.window-control:hover { background: #2a2a2e; }
+.window-control.close:hover { background: #e81123; }
+
+.window-control svg {
+    width: 10px;
+    height: 10px;
+    fill: white;
+}
+
+/* ─── Window Border ────────────────────────────────────────── */
+.window-border {
+    position: fixed;
+    top: 42px;
+    left: 10px;
+    width: calc(100vw - 20px);
+    height: calc(100vh - 52px);
+    pointer-events: none;
+    z-index: 9999;
+}
+
+.window-border-line { position: absolute; background: var(--grid); }
+.window-border-line.top    { top: 0;    left: 0;  right: 0;  height: 1px; }
+.window-border-line.bottom { bottom: 0; left: 0;  right: 0;  height: 1px; }
+.window-border-line.left   { top: 0;    bottom: 0; left: 0;  width: 1px; }
+.window-border-line.right  { top: 0;    bottom: 0; right: 0; width: 1px; }
+
+/* ─── Platform Header ──────────────────────────────────────── */
+.final-platform {
+    position: fixed;
+    left: 30px;
+    top: 52px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    z-index: 100;
+}
+
+.final-platform-logo {
+    width: 24px;
+    height: 24px;
+    position: relative;
+}
+
+.final-platform-logo .palantir-icon {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.final-platform-logo .palantir-icon::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 18px;
+    height: 18px;
+    border: 3px solid white;
+    border-radius: 50%;
+}
+
+.final-platform-logo .palantir-icon::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 11px solid transparent;
+    border-right: 11px solid transparent;
+    border-top: 9px solid white;
+}
+
+.final-platform-text {
+    font-size: 22px;
+    font-weight: 300;
+    letter-spacing: 1px;
+    position: relative;
+}
+
+.final-platform-text .gotham { font-weight: 500; }
+
+.final-platform-text::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: var(--grid);
+}
+
+/* ─── Layout Lines ─────────────────────────────────────────── */
+.title-line {
+    position: fixed;
+    left: 10px;
+    top: 92px;
+    width: calc(100vw - 30px);
+    height: 3px;
+    background: var(--grid);
+}
+
+.vertical-line {
+    position: fixed;
+    left: 260px;
+    top: 97px;
+    width: 3px;
+    height: calc(100vh - 107px);
+    background: var(--grid);
+}
+
+/* ─── Nav Sidebar ──────────────────────────────────────────── */
+.main-content {
+    position: fixed;
+    left: -245px;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 122px 30px 30px 280px;
+    /* pass pointer events only to children so tool-content stays interactive */
+    pointer-events: none;
+}
+
+.category-column {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    width: 200px;
+    pointer-events: auto;
+}
+
+.category-column.right { margin-top: 40px; }
+
+.category-title {
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid var(--grid-dim);
+}
+
+/* ─── Overview Column ───────────────────────────────────── */
+.category-column.overview {
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.category-column.overview .tool-item {
+    position: relative;
+    display: block;
+    cursor: pointer;
+    padding-left: 15px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+}
+
+.category-column.overview .tool-item.selected { padding-left: 20px; }
+
+.category-column.overview .tool-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 16px;
+    border: 1px solid var(--grid);
+    transition: all 0.3s ease;
+}
+
+.category-column.overview .tool-item.selected::before {
+    width: 8px;
+    border-color: white;
+}
+
+.category-column.overview .tool-item-name {
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+    transition: color 0.3s ease;
+}
+
+.category-column.overview .tool-item:hover .tool-item-name,
+.category-column.overview .tool-item.selected .tool-item-name { color: white; }
+
+.category-column.overview .tool-item-underline {
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--grid);
+    transition: width 0.3s ease;
+}
+
+.category-column.overview .tool-item:hover .tool-item-underline,
+.category-column.overview .tool-item.selected .tool-item-underline { width: 100%; }
+
+.category-column.overview .tool-item.selected .tool-item-underline { background: white; }
+
+/* ─── Tool Items ───────────────────────────────────────────── */
+.tool-item {
+    position: relative;
+    display: block;
+    cursor: pointer;
+    padding-left: 15px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+}
+
+.tool-item.selected { padding-left: 20px; }
+
+.tool-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 16px;
+    border: 1px solid var(--grid);
+    transition: all 0.3s ease;
+}
+
+.tool-item.selected::before {
+    width: 8px;
+    border-color: white;
+}
+
+.tool-item-name {
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+    transition: color 0.3s ease;
+}
+
+.tool-item:hover .tool-item-name,
+.tool-item.selected .tool-item-name { color: white; }
+
+.tool-item-underline {
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--grid);
+    transition: width 0.3s ease;
+}
+
+.tool-item:hover .tool-item-underline,
+.tool-item.selected .tool-item-underline { width: 100%; }
+
+.tool-item.selected .tool-item-underline { background: white; }
+
+.tool-item-status {
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+    margin-top: 3px;
+}
+
+.tool-item-status.active  { color: var(--status-active); }
+.tool-item-status.standby { color: var(--status-standby); }
+
+/* ─── Tool Content Panel ───────────────────────────────────── */
+.tool-content {
+    position: fixed;
+    left: 283px;
+    top: 115px;
+    right: 20px;
+    bottom: 20px;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+/* ─── Tool Placeholder ─────────────────────────────────────── */
+.tool-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 28px;
+    border: 1px solid var(--grid-dim);
+    max-width: 580px;
+}
+
+.tool-placeholder-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+}
+
+.tool-placeholder-name {
+    font-size: 32px;
+    font-weight: 300;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
+
+.tool-placeholder-desc {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.7;
+    max-width: 420px;
+}
+
+.tool-placeholder-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-top: 4px;
+}
+
+.tool-placeholder-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--status-standby);
+    flex-shrink: 0;
+}
+
+.tool-placeholder-dot.active { background: var(--status-active); }
