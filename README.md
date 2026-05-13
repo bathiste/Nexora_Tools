@@ -242,6 +242,44 @@ npm run dev       # Run directly with ts-node
 
 ---
 
-## License
+## License & Legal Notice
 
-Internal platform tool. Not for public distribution.
+Copyright (c) 2026 Nexora Gotham Platform
+
+This project is provided for educational, research, defensive security, and authorized penetration testing purposes only.
+
+By using, copying, modifying, compiling, distributing, or executing this software, you agree to the following terms:
+
+- You are solely responsible for complying with all applicable local, national, and international laws and regulations.
+- Unauthorized access, disruption, denial-of-service activity, exploitation, surveillance, or interference against systems you do not own or explicitly control may violate criminal and civil law in your jurisdiction.
+- The authors, contributors, maintainers, affiliates, and distributors of this project assume no liability for:
+  - misuse or unlawful operation of the software,
+  - damages resulting from execution or deployment,
+  - data loss,
+  - service interruption,
+  - legal consequences,
+  - third-party claims,
+  - security incidents,
+  - financial losses,
+  - indirect or consequential damages of any kind.
+
+This software is provided "AS IS", without warranty of any kind, express or implied, including but not limited to:
+- merchantability,
+- fitness for a particular purpose,
+- non-infringement,
+- operational reliability,
+- security guarantees.
+
+The user assumes all risk associated with use, modification, testing, networking activity, and deployment.
+
+You are responsible for ensuring that all testing activity is:
+- explicitly authorized,
+- documented,
+- contractually permitted where applicable,
+- compliant with the laws of your country and the target jurisdiction.
+
+The developers do not endorse or authorize illegal cyber activity.
+
+If any portion of this license or disclaimer is found unenforceable under applicable law, the remaining sections shall remain in full effect.
+
+Use of this software constitutes acceptance of these terms.
