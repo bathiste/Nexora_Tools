@@ -1,0 +1,28 @@
+# Twitter Scraper - Proxy Configuration
+# Format: protocol://username:password@host:port
+# Or: protocol://host:port
+#
+# Supported protocols:
+#   http://    - HTTP proxy
+#   https://   - HTTPS proxy
+#   socks4://  - SOCKS4 proxy
+#   socks5://  - SOCKS5 proxy
+#
+# Add ONE proxy per line. Lines starting with # are ignored.
+# Leave empty to disable proxy usage (direct connection).
+
+# === HTTP Proxies ===
+# http://user:pass@127.0.0.1:8080
+# http://127.0.0.1:3128
+
+# === HTTPS Proxies ===
+# https://user:pass@127.0.0.1:8080
+# https://127.0.0.1:8443
+
+# === SOCKS4 Proxies ===
+# socks4://127.0.0.1:1080
+# socks4://user:pass@127.0.0.1:1080
+
+# === SOCKS5 Proxies ===
+# socks5://127.0.0.1:1080
+# socks5://user:pass@127.0.0.1:1080

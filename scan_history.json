@@ -1,0 +1,2102 @@
+{
+  "scans": [
+    {
+      "scan_time": "2026-05-15T20:18:54.764797",
+      "target": "https://example.com/",
+      "option": "all",
+      "total_bypasses": 84,
+      "bypasses": [
+        {
+          "technique": "Original",
+          "payload": "direct access",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:18:48.852154",
+          "id": "8c9bf00e"
+        },
+        {
+          "technique": "Header - X-Forwarded-For",
+          "payload": "X-Forwarded-For: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded-For": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:48.868266",
+          "id": "b451b786"
+        },
+        {
+          "technique": "Header - X-Forwarded",
+          "payload": "X-Forwarded: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:48.892633",
+          "id": "ae0cfaa8"
+        },
+        {
+          "technique": "Header - X-Forwarded-Host",
+          "payload": "X-Forwarded-Host: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded-Host": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:49.243038",
+          "id": "9aa8b1a5"
+        },
+        {
+          "technique": "Header - X-Forwarded-Server",
+          "payload": "X-Forwarded-Server: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded-Server": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:49.259394",
+          "id": "d7435c35"
+        },
+        {
+          "technique": "Header - X-Remote-IP",
+          "payload": "X-Remote-IP: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Remote-IP": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:49.278763",
+          "id": "fb160a32"
+        },
+        {
+          "technique": "Header - X-Remote-Addr",
+          "payload": "X-Remote-Addr: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Remote-Addr": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:49.296502",
+          "id": "9057e464"
+        },
+        {
+          "technique": "Header - X-Real-IP",
+          "payload": "X-Real-IP: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Real-IP": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:49.314053",
+          "id": "adcc6ba3"
+        },
+        {
+          "technique": "Header - X-Client-IP",
+          "payload": "X-Client-IP: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Client-IP": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:49.332822",
+          "id": "b3013597"
+        },
+        {
+          "technique": "Header - X-Host",
+          "payload": "X-Host: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Host": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:49.433778",
+          "id": "3c26dee7"
+        },
+        {
+          "technique": "Header - X-Originating-IP",
+          "payload": "X-Originating-IP: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Originating-IP": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:49.455196",
+          "id": "c43d9f20"
+        },
+        {
+          "technique": "Header - X-Original-IP",
+          "payload": "X-Original-IP: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Original-IP": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:49.475199",
+          "id": "f0102523"
+        },
+        {
+          "technique": "Header - True-Client-IP",
+          "payload": "True-Client-IP: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "True-Client-IP": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:49.492365",
+          "id": "d7e28467"
+        },
+        {
+          "technique": "Header - X-Proxy-IP",
+          "payload": "X-Proxy-IP: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Proxy-IP": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:49.537883",
+          "id": "c8a1e1cb"
+        },
+        {
+          "technique": "Header - X-Custom-IP-Authorization",
+          "payload": "X-Custom-IP-Authorization: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Custom-IP-Authorization": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:49.554475",
+          "id": "912d21e5"
+        },
+        {
+          "technique": "Header - X-Originating-Forwarded-For",
+          "payload": "X-Originating-Forwarded-For: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Originating-Forwarded-For": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:49.570261",
+          "id": "7a189e86"
+        },
+        {
+          "technique": "Header - X-Forward-For",
+          "payload": "X-Forward-For: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forward-For": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:49.586498",
+          "id": "cf636558"
+        },
+        {
+          "technique": "Header - X-Remote-For",
+          "payload": "X-Remote-For: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Remote-For": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:49.604568",
+          "id": "bc077d33"
+        },
+        {
+          "technique": "Header - X-Cluster-Client-IP",
+          "payload": "X-Cluster-Client-IP: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Cluster-Client-IP": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:49.621872",
+          "id": "f57cdddc"
+        },
+        {
+          "technique": "Header - X-Original-Remote-Addr",
+          "payload": "X-Original-Remote-Addr: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Original-Remote-Addr": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:49.641431",
+          "id": "8e5789c5"
+        },
+        {
+          "technique": "Header - X-Real-IP-Forwarded",
+          "payload": "X-Real-IP-Forwarded: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Real-IP-Forwarded": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:49.659279",
+          "id": "bb4f7338"
+        },
+        {
+          "technique": "Header - X-Forwarded-By",
+          "payload": "X-Forwarded-By: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded-By": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:49.678316",
+          "id": "da357d7d"
+        },
+        {
+          "technique": "Header - X-Forwarded-For-Original",
+          "payload": "X-Forwarded-For-Original: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded-For-Original": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:49.695542",
+          "id": "123315b8"
+        },
+        {
+          "technique": "Header - X-ProxyUser-Ip",
+          "payload": "X-ProxyUser-Ip: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-ProxyUser-Ip": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:49.711486",
+          "id": "be9aa840"
+        },
+        {
+          "technique": "Header - Referer",
+          "payload": "Referer: https://example.com/",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "Referer": "https://example.com/"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:50.199128",
+          "id": "f9df9c2b"
+        },
+        {
+          "technique": "Header - Origin",
+          "payload": "Origin: https://google.com",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "Origin": "https://google.com"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:50.297470",
+          "id": "39bfcf42"
+        },
+        {
+          "technique": "Header - User-Agent",
+          "payload": "User-Agent: Googlebot/2.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "User-Agent": "Googlebot/2.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:50.313498",
+          "id": "d423f24e"
+        },
+        {
+          "technique": "Header - User-Agent",
+          "payload": "User-Agent: Bingbot/2.0",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "User-Agent": "Bingbot/2.0"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:50.328465",
+          "id": "3b034242"
+        },
+        {
+          "technique": "Header - User-Agent",
+          "payload": "User-Agent: curl/7.68.0",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "User-Agent": "curl/7.68.0"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:50.343701",
+          "id": "fb0d86fc"
+        },
+        {
+          "technique": "Header - X-Cache-Status",
+          "payload": "X-Cache-Status: BYPASS",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Cache-Status": "BYPASS"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:50.359547",
+          "id": "fafc61e8"
+        },
+        {
+          "technique": "Header - Cache-Control",
+          "payload": "Cache-Control: no-cache",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "Cache-Control": "no-cache"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:50.374658",
+          "id": "a7554a55"
+        },
+        {
+          "technique": "Header - X-Admin",
+          "payload": "X-Admin: true",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Admin": "true"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:50.389793",
+          "id": "10f62a7e"
+        },
+        {
+          "technique": "Header - X-Debug",
+          "payload": "X-Debug: true",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Debug": "true"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:50.404628",
+          "id": "f1f26bdc"
+        },
+        {
+          "technique": "Header - Authorization",
+          "payload": "Authorization: Bearer bypass",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "Authorization": "Bearer bypass"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:50.418099",
+          "id": "e4e39e1d"
+        },
+        {
+          "technique": "Header - X-API-Key",
+          "payload": "X-API-Key: bypass",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-API-Key": "bypass"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:50.432448",
+          "id": "cbcb2cf4"
+        },
+        {
+          "technique": "Header - X-Forwarded-Port",
+          "payload": "X-Forwarded-Port: 443",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded-Port": "443"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:50.446103",
+          "id": "21265ed5"
+        },
+        {
+          "technique": "Header - X-Forwarded-Scheme",
+          "payload": "X-Forwarded-Scheme: http",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded-Scheme": "http"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:50.545079",
+          "id": "82479be0"
+        },
+        {
+          "technique": "Header - X-Forwarded-Proto",
+          "payload": "X-Forwarded-Proto: http",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded-Proto": "http"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:50.559799",
+          "id": "bb9ae1a2"
+        },
+        {
+          "technique": "Header - X-Forwarded-Protocol",
+          "payload": "X-Forwarded-Protocol: http",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded-Protocol": "http"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:50.575370",
+          "id": "21559a79"
+        },
+        {
+          "technique": "Header - X-HTTP-Method-Override",
+          "payload": "X-HTTP-Method-Override: GET",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-HTTP-Method-Override": "GET"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:50.675511",
+          "id": "1acb8387"
+        },
+        {
+          "technique": "Header - X-Method-Override",
+          "payload": "X-Method-Override: POST",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Method-Override": "POST"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:50.773166",
+          "id": "bcca872f"
+        },
+        {
+          "technique": "Header - Accept-Language",
+          "payload": "Accept-Language: en-US,en;q=0.9",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "Accept-Language": "en-US,en;q=0.9"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:50.787997",
+          "id": "62d5c924"
+        },
+        {
+          "technique": "Header - X-CF-Forwarded-For",
+          "payload": "X-CF-Forwarded-For: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-CF-Forwarded-For": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:50.808195",
+          "id": "51aa93dc"
+        },
+        {
+          "technique": "Header - X-Azure-Forwarded-For",
+          "payload": "X-Azure-Forwarded-For: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Azure-Forwarded-For": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:50.821194",
+          "id": "eb2b8b2c"
+        },
+        {
+          "technique": "Header - X-AWS-Forwarded-For",
+          "payload": "X-AWS-Forwarded-For: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-AWS-Forwarded-For": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:50.834748",
+          "id": "fb14e027"
+        },
+        {
+          "technique": "Header - X-Sucuri-Client-IP",
+          "payload": "X-Sucuri-Client-IP: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Sucuri-Client-IP": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:50.849107",
+          "id": "3fd19cd1"
+        },
+        {
+          "technique": "Header - X-Fastly-Client-IP",
+          "payload": "X-Fastly-Client-IP: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Fastly-Client-IP": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:50.870223",
+          "id": "35ff645e"
+        },
+        {
+          "technique": "Header - X-Real-Host",
+          "payload": "X-Real-Host: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Real-Host": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:50.885882",
+          "id": "7cf526af"
+        },
+        {
+          "technique": "Header - X-Forwarded-Context",
+          "payload": "X-Forwarded-Context: admin",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded-Context": "admin"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:50.904217",
+          "id": "aecd7a9d"
+        },
+        {
+          "technique": "Protocol Switch",
+          "payload": "http",
+          "status_code": 200,
+          "url": "http://example.com/",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:18:50.943677",
+          "id": "cf5d6148"
+        },
+        {
+          "technique": "Port Bypass",
+          "payload": "port 80",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded-Port": "80"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:50.956963",
+          "id": "30036715"
+        },
+        {
+          "technique": "Port Bypass",
+          "payload": "port 443",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded-Port": "443"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:50.977750",
+          "id": "a78b4ecc"
+        },
+        {
+          "technique": "Port Bypass",
+          "payload": "port 8080",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded-Port": "8080"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:50.994002",
+          "id": "ba08cc9b"
+        },
+        {
+          "technique": "Port Bypass",
+          "payload": "port 8443",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded-Port": "8443"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:51.006952",
+          "id": "73999990"
+        },
+        {
+          "technique": "Port Bypass",
+          "payload": "port 4443",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded-Port": "4443"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:51.023996",
+          "id": "8ac1ec99"
+        },
+        {
+          "technique": "Port Bypass",
+          "payload": "port 3000",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded-Port": "3000"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:51.039856",
+          "id": "f36683dd"
+        },
+        {
+          "technique": "Port Bypass",
+          "payload": "port 5000",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded-Port": "5000"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:51.053226",
+          "id": "f4a5c124"
+        },
+        {
+          "technique": "Port Bypass",
+          "payload": "port 8000",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded-Port": "8000"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:51.068235",
+          "id": "d96e1e7d"
+        },
+        {
+          "technique": "Port Bypass",
+          "payload": "port 8888",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded-Port": "8888"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:51.084863",
+          "id": "8debd04f"
+        },
+        {
+          "technique": "Port Bypass",
+          "payload": "port 9000",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded-Port": "9000"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:18:51.102474",
+          "id": "4c3ef091"
+        },
+        {
+          "technique": "Method Bypass",
+          "payload": "GET",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:18:51.119166",
+          "id": "5e280041"
+        },
+        {
+          "technique": "Method Bypass",
+          "payload": "HEAD",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "HEAD",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:18:51.190835",
+          "id": "744625e0"
+        },
+        {
+          "technique": "URL Encode",
+          "payload": "#?",
+          "status_code": 200,
+          "url": "https://example.com/#?",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:18:51.289771",
+          "id": "430215a2"
+        },
+        {
+          "technique": "URL Encode",
+          "payload": "..",
+          "status_code": 200,
+          "url": "https://example.com/..",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:18:51.512774",
+          "id": "92d3aeb5"
+        },
+        {
+          "technique": "URL Encode",
+          "payload": "../",
+          "status_code": 200,
+          "url": "https://example.com/../",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:18:51.525341",
+          "id": "838d1309"
+        },
+        {
+          "technique": "URL Encode",
+          "payload": "../../",
+          "status_code": 200,
+          "url": "https://example.com/../../",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:18:51.541858",
+          "id": "d15cee97"
+        },
+        {
+          "technique": "URL Encode",
+          "payload": "/..",
+          "status_code": 200,
+          "url": "https://example.com//..",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:18:51.554230",
+          "id": "2404e0d2"
+        },
+        {
+          "technique": "URL Encode",
+          "payload": "/../",
+          "status_code": 200,
+          "url": "https://example.com//../",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:18:51.567245",
+          "id": "2ab151d6"
+        },
+        {
+          "technique": "URL Encode",
+          "payload": "/../../",
+          "status_code": 200,
+          "url": "https://example.com//../../",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:18:51.579695",
+          "id": "30fe26ad"
+        },
+        {
+          "technique": "URL Encode",
+          "payload": "//",
+          "status_code": 200,
+          "url": "https://example.com///",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:18:51.596176",
+          "id": "6648b267"
+        },
+        {
+          "technique": "URL Encode",
+          "payload": "/./",
+          "status_code": 200,
+          "url": "https://example.com//./",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:18:51.611184",
+          "id": "d62e5370"
+        },
+        {
+          "technique": "URL Encode",
+          "payload": "//.",
+          "status_code": 200,
+          "url": "https://example.com///.",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:18:51.625410",
+          "id": "5afc38a8"
+        },
+        {
+          "technique": "URL Encode",
+          "payload": "///",
+          "status_code": 200,
+          "url": "https://example.com////",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:18:51.638914",
+          "id": "77f3ba03"
+        },
+        {
+          "technique": "URL Encode",
+          "payload": "/%2e/",
+          "status_code": 200,
+          "url": "https://example.com//%2e/",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:18:51.753865",
+          "id": "e0d2fd60"
+        },
+        {
+          "technique": "Path Traversal",
+          "payload": "../../../",
+          "status_code": 200,
+          "url": "https://example.com//../../../",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:18:52.469092",
+          "id": "374c88f5"
+        },
+        {
+          "technique": "Path Traversal",
+          "payload": "../../../../",
+          "status_code": 200,
+          "url": "https://example.com//../../../../",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:18:52.638632",
+          "id": "88159239"
+        },
+        {
+          "technique": "Path Traversal",
+          "payload": "../../../../../",
+          "status_code": 200,
+          "url": "https://example.com//../../../../../",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:18:52.807502",
+          "id": "442a89f8"
+        },
+        {
+          "technique": "Path Traversal",
+          "payload": "../",
+          "status_code": 200,
+          "url": "https://example.com//../",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:18:52.963059",
+          "id": "693f5def"
+        },
+        {
+          "technique": "Path Traversal",
+          "payload": "./../",
+          "status_code": 200,
+          "url": "https://example.com//./../",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:18:53.107358",
+          "id": "5a21b4ec"
+        },
+        {
+          "technique": "Path Traversal",
+          "payload": "../.../../",
+          "status_code": 200,
+          "url": "https://example.com//../.../../",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:18:53.327370",
+          "id": "43a86b97"
+        },
+        {
+          "technique": "Path Traversal",
+          "payload": ".;/../",
+          "status_code": 200,
+          "url": "https://example.com//.;/../",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:18:54.102967",
+          "id": "92732dc6"
+        },
+        {
+          "technique": "Path Traversal",
+          "payload": "..;/../",
+          "status_code": 200,
+          "url": "https://example.com//..;/../",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:18:54.116050",
+          "id": "8d395a44"
+        },
+        {
+          "technique": "Path Traversal",
+          "payload": "admin/../",
+          "status_code": 200,
+          "url": "https://example.com//admin/../",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:18:54.126141",
+          "id": "1199deb4"
+        },
+        {
+          "technique": "Path Traversal",
+          "payload": "admin/./../",
+          "status_code": 200,
+          "url": "https://example.com//admin/./../",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:18:54.137814",
+          "id": "408bff0b"
+        }
+      ],
+      "timestamp": 1778872734.768798
+    },
+    {
+      "scan_time": "2026-05-15T20:19:33.687795",
+      "target": "https://example.com/",
+      "option": "all",
+      "total_bypasses": 84,
+      "bypasses": [
+        {
+          "technique": "Original",
+          "payload": "direct access",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:19:29.986890",
+          "id": "8c9bf00e"
+        },
+        {
+          "technique": "Header - X-Forwarded-For",
+          "payload": "X-Forwarded-For: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded-For": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:29.999150",
+          "id": "b451b786"
+        },
+        {
+          "technique": "Header - X-Forwarded",
+          "payload": "X-Forwarded: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.013952",
+          "id": "ae0cfaa8"
+        },
+        {
+          "technique": "Header - X-Forwarded-Host",
+          "payload": "X-Forwarded-Host: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded-Host": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.026563",
+          "id": "9aa8b1a5"
+        },
+        {
+          "technique": "Header - X-Forwarded-Server",
+          "payload": "X-Forwarded-Server: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded-Server": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.038772",
+          "id": "d7435c35"
+        },
+        {
+          "technique": "Header - X-Remote-IP",
+          "payload": "X-Remote-IP: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Remote-IP": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.050467",
+          "id": "fb160a32"
+        },
+        {
+          "technique": "Header - X-Remote-Addr",
+          "payload": "X-Remote-Addr: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Remote-Addr": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.064465",
+          "id": "9057e464"
+        },
+        {
+          "technique": "Header - X-Real-IP",
+          "payload": "X-Real-IP: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Real-IP": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.076510",
+          "id": "adcc6ba3"
+        },
+        {
+          "technique": "Header - X-Client-IP",
+          "payload": "X-Client-IP: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Client-IP": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.089976",
+          "id": "b3013597"
+        },
+        {
+          "technique": "Header - X-Host",
+          "payload": "X-Host: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Host": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.101340",
+          "id": "3c26dee7"
+        },
+        {
+          "technique": "Header - X-Originating-IP",
+          "payload": "X-Originating-IP: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Originating-IP": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.114344",
+          "id": "c43d9f20"
+        },
+        {
+          "technique": "Header - X-Original-IP",
+          "payload": "X-Original-IP: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Original-IP": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.127191",
+          "id": "f0102523"
+        },
+        {
+          "technique": "Header - True-Client-IP",
+          "payload": "True-Client-IP: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "True-Client-IP": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.138287",
+          "id": "d7e28467"
+        },
+        {
+          "technique": "Header - X-Proxy-IP",
+          "payload": "X-Proxy-IP: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Proxy-IP": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.159435",
+          "id": "c8a1e1cb"
+        },
+        {
+          "technique": "Header - X-Custom-IP-Authorization",
+          "payload": "X-Custom-IP-Authorization: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Custom-IP-Authorization": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.171500",
+          "id": "912d21e5"
+        },
+        {
+          "technique": "Header - X-Originating-Forwarded-For",
+          "payload": "X-Originating-Forwarded-For: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Originating-Forwarded-For": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.183574",
+          "id": "7a189e86"
+        },
+        {
+          "technique": "Header - X-Forward-For",
+          "payload": "X-Forward-For: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forward-For": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.195859",
+          "id": "cf636558"
+        },
+        {
+          "technique": "Header - X-Remote-For",
+          "payload": "X-Remote-For: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Remote-For": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.208408",
+          "id": "bc077d33"
+        },
+        {
+          "technique": "Header - X-Cluster-Client-IP",
+          "payload": "X-Cluster-Client-IP: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Cluster-Client-IP": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.222507",
+          "id": "f57cdddc"
+        },
+        {
+          "technique": "Header - X-Original-Remote-Addr",
+          "payload": "X-Original-Remote-Addr: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Original-Remote-Addr": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.233726",
+          "id": "8e5789c5"
+        },
+        {
+          "technique": "Header - X-Real-IP-Forwarded",
+          "payload": "X-Real-IP-Forwarded: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Real-IP-Forwarded": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.245976",
+          "id": "bb4f7338"
+        },
+        {
+          "technique": "Header - X-Forwarded-By",
+          "payload": "X-Forwarded-By: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded-By": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.257530",
+          "id": "da357d7d"
+        },
+        {
+          "technique": "Header - X-Forwarded-For-Original",
+          "payload": "X-Forwarded-For-Original: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded-For-Original": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.270220",
+          "id": "123315b8"
+        },
+        {
+          "technique": "Header - X-ProxyUser-Ip",
+          "payload": "X-ProxyUser-Ip: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-ProxyUser-Ip": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.282498",
+          "id": "be9aa840"
+        },
+        {
+          "technique": "Header - Referer",
+          "payload": "Referer: https://example.com/",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "Referer": "https://example.com/"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.335527",
+          "id": "f9df9c2b"
+        },
+        {
+          "technique": "Header - Origin",
+          "payload": "Origin: https://google.com",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "Origin": "https://google.com"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.350118",
+          "id": "39bfcf42"
+        },
+        {
+          "technique": "Header - User-Agent",
+          "payload": "User-Agent: Googlebot/2.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "User-Agent": "Googlebot/2.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.361495",
+          "id": "d423f24e"
+        },
+        {
+          "technique": "Header - User-Agent",
+          "payload": "User-Agent: Bingbot/2.0",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "User-Agent": "Bingbot/2.0"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.374344",
+          "id": "3b034242"
+        },
+        {
+          "technique": "Header - User-Agent",
+          "payload": "User-Agent: curl/7.68.0",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "User-Agent": "curl/7.68.0"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.385908",
+          "id": "fb0d86fc"
+        },
+        {
+          "technique": "Header - X-Cache-Status",
+          "payload": "X-Cache-Status: BYPASS",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Cache-Status": "BYPASS"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.397517",
+          "id": "fafc61e8"
+        },
+        {
+          "technique": "Header - Cache-Control",
+          "payload": "Cache-Control: no-cache",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "Cache-Control": "no-cache"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.410493",
+          "id": "a7554a55"
+        },
+        {
+          "technique": "Header - X-Admin",
+          "payload": "X-Admin: true",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Admin": "true"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.421516",
+          "id": "10f62a7e"
+        },
+        {
+          "technique": "Header - X-Debug",
+          "payload": "X-Debug: true",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Debug": "true"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.433780",
+          "id": "f1f26bdc"
+        },
+        {
+          "technique": "Header - Authorization",
+          "payload": "Authorization: Bearer bypass",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "Authorization": "Bearer bypass"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.446146",
+          "id": "e4e39e1d"
+        },
+        {
+          "technique": "Header - X-API-Key",
+          "payload": "X-API-Key: bypass",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-API-Key": "bypass"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.457502",
+          "id": "cbcb2cf4"
+        },
+        {
+          "technique": "Header - X-Forwarded-Port",
+          "payload": "X-Forwarded-Port: 443",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded-Port": "443"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.469030",
+          "id": "21265ed5"
+        },
+        {
+          "technique": "Header - X-Forwarded-Scheme",
+          "payload": "X-Forwarded-Scheme: http",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded-Scheme": "http"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.481360",
+          "id": "82479be0"
+        },
+        {
+          "technique": "Header - X-Forwarded-Proto",
+          "payload": "X-Forwarded-Proto: http",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded-Proto": "http"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.492569",
+          "id": "bb9ae1a2"
+        },
+        {
+          "technique": "Header - X-Forwarded-Protocol",
+          "payload": "X-Forwarded-Protocol: http",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded-Protocol": "http"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.503230",
+          "id": "21559a79"
+        },
+        {
+          "technique": "Header - X-HTTP-Method-Override",
+          "payload": "X-HTTP-Method-Override: GET",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-HTTP-Method-Override": "GET"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.518024",
+          "id": "1acb8387"
+        },
+        {
+          "technique": "Header - X-Method-Override",
+          "payload": "X-Method-Override: POST",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Method-Override": "POST"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.529712",
+          "id": "bcca872f"
+        },
+        {
+          "technique": "Header - Accept-Language",
+          "payload": "Accept-Language: en-US,en;q=0.9",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "Accept-Language": "en-US,en;q=0.9"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.540792",
+          "id": "62d5c924"
+        },
+        {
+          "technique": "Header - X-CF-Forwarded-For",
+          "payload": "X-CF-Forwarded-For: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-CF-Forwarded-For": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.552139",
+          "id": "51aa93dc"
+        },
+        {
+          "technique": "Header - X-Azure-Forwarded-For",
+          "payload": "X-Azure-Forwarded-For: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Azure-Forwarded-For": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.562457",
+          "id": "eb2b8b2c"
+        },
+        {
+          "technique": "Header - X-AWS-Forwarded-For",
+          "payload": "X-AWS-Forwarded-For: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-AWS-Forwarded-For": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.574479",
+          "id": "fb14e027"
+        },
+        {
+          "technique": "Header - X-Sucuri-Client-IP",
+          "payload": "X-Sucuri-Client-IP: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Sucuri-Client-IP": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.588005",
+          "id": "3fd19cd1"
+        },
+        {
+          "technique": "Header - X-Fastly-Client-IP",
+          "payload": "X-Fastly-Client-IP: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Fastly-Client-IP": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.600271",
+          "id": "35ff645e"
+        },
+        {
+          "technique": "Header - X-Real-Host",
+          "payload": "X-Real-Host: 127.0.0.1",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Real-Host": "127.0.0.1"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.612076",
+          "id": "7cf526af"
+        },
+        {
+          "technique": "Header - X-Forwarded-Context",
+          "payload": "X-Forwarded-Context: admin",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded-Context": "admin"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.623660",
+          "id": "aecd7a9d"
+        },
+        {
+          "technique": "Protocol Switch",
+          "payload": "http",
+          "status_code": 200,
+          "url": "http://example.com/",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.671504",
+          "id": "cf5d6148"
+        },
+        {
+          "technique": "Port Bypass",
+          "payload": "port 80",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded-Port": "80"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.684250",
+          "id": "30036715"
+        },
+        {
+          "technique": "Port Bypass",
+          "payload": "port 443",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded-Port": "443"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.696427",
+          "id": "a78b4ecc"
+        },
+        {
+          "technique": "Port Bypass",
+          "payload": "port 8080",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded-Port": "8080"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.708271",
+          "id": "ba08cc9b"
+        },
+        {
+          "technique": "Port Bypass",
+          "payload": "port 8443",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded-Port": "8443"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.720083",
+          "id": "73999990"
+        },
+        {
+          "technique": "Port Bypass",
+          "payload": "port 4443",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded-Port": "4443"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.731634",
+          "id": "8ac1ec99"
+        },
+        {
+          "technique": "Port Bypass",
+          "payload": "port 3000",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded-Port": "3000"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.744604",
+          "id": "f36683dd"
+        },
+        {
+          "technique": "Port Bypass",
+          "payload": "port 5000",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded-Port": "5000"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.755179",
+          "id": "f4a5c124"
+        },
+        {
+          "technique": "Port Bypass",
+          "payload": "port 8000",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded-Port": "8000"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.768295",
+          "id": "d96e1e7d"
+        },
+        {
+          "technique": "Port Bypass",
+          "payload": "port 8888",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded-Port": "8888"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.778500",
+          "id": "8debd04f"
+        },
+        {
+          "technique": "Port Bypass",
+          "payload": "port 9000",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {
+            "X-Forwarded-Port": "9000"
+          },
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.789510",
+          "id": "4c3ef091"
+        },
+        {
+          "technique": "Method Bypass",
+          "payload": "GET",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.807190",
+          "id": "5e280041"
+        },
+        {
+          "technique": "Method Bypass",
+          "payload": "HEAD",
+          "status_code": 200,
+          "url": "https://example.com/",
+          "method": "HEAD",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.863056",
+          "id": "744625e0"
+        },
+        {
+          "technique": "URL Encode",
+          "payload": "#?",
+          "status_code": 200,
+          "url": "https://example.com/#?",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:19:30.947273",
+          "id": "430215a2"
+        },
+        {
+          "technique": "URL Encode",
+          "payload": "..",
+          "status_code": 200,
+          "url": "https://example.com/..",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:19:31.204447",
+          "id": "92d3aeb5"
+        },
+        {
+          "technique": "URL Encode",
+          "payload": "../",
+          "status_code": 200,
+          "url": "https://example.com/../",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:19:31.218647",
+          "id": "838d1309"
+        },
+        {
+          "technique": "URL Encode",
+          "payload": "../../",
+          "status_code": 200,
+          "url": "https://example.com/../../",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:19:31.249441",
+          "id": "d15cee97"
+        },
+        {
+          "technique": "URL Encode",
+          "payload": "/..",
+          "status_code": 200,
+          "url": "https://example.com//..",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:19:31.261245",
+          "id": "2404e0d2"
+        },
+        {
+          "technique": "URL Encode",
+          "payload": "/../",
+          "status_code": 200,
+          "url": "https://example.com//../",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:19:31.274793",
+          "id": "2ab151d6"
+        },
+        {
+          "technique": "URL Encode",
+          "payload": "/../../",
+          "status_code": 200,
+          "url": "https://example.com//../../",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:19:31.288845",
+          "id": "30fe26ad"
+        },
+        {
+          "technique": "URL Encode",
+          "payload": "//",
+          "status_code": 200,
+          "url": "https://example.com///",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:19:31.302222",
+          "id": "6648b267"
+        },
+        {
+          "technique": "URL Encode",
+          "payload": "/./",
+          "status_code": 200,
+          "url": "https://example.com//./",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:19:31.317816",
+          "id": "d62e5370"
+        },
+        {
+          "technique": "URL Encode",
+          "payload": "//.",
+          "status_code": 200,
+          "url": "https://example.com///.",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:19:31.331675",
+          "id": "5afc38a8"
+        },
+        {
+          "technique": "URL Encode",
+          "payload": "///",
+          "status_code": 200,
+          "url": "https://example.com////",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:19:31.345611",
+          "id": "77f3ba03"
+        },
+        {
+          "technique": "URL Encode",
+          "payload": "/%2e/",
+          "status_code": 200,
+          "url": "https://example.com//%2e/",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:19:31.361497",
+          "id": "e0d2fd60"
+        },
+        {
+          "technique": "Path Traversal",
+          "payload": "../../../",
+          "status_code": 200,
+          "url": "https://example.com//../../../",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:19:31.783801",
+          "id": "374c88f5"
+        },
+        {
+          "technique": "Path Traversal",
+          "payload": "../../../../",
+          "status_code": 200,
+          "url": "https://example.com//../../../../",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:19:31.804239",
+          "id": "88159239"
+        },
+        {
+          "technique": "Path Traversal",
+          "payload": "../../../../../",
+          "status_code": 200,
+          "url": "https://example.com//../../../../../",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:19:31.818571",
+          "id": "442a89f8"
+        },
+        {
+          "technique": "Path Traversal",
+          "payload": "../",
+          "status_code": 200,
+          "url": "https://example.com//../",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:19:31.834965",
+          "id": "693f5def"
+        },
+        {
+          "technique": "Path Traversal",
+          "payload": "./../",
+          "status_code": 200,
+          "url": "https://example.com//./../",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:19:31.849256",
+          "id": "5a21b4ec"
+        },
+        {
+          "technique": "Path Traversal",
+          "payload": "../.../../",
+          "status_code": 200,
+          "url": "https://example.com//../.../../",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:19:31.879716",
+          "id": "43a86b97"
+        },
+        {
+          "technique": "Path Traversal",
+          "payload": ".;/../",
+          "status_code": 200,
+          "url": "https://example.com//.;/../",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:19:32.157581",
+          "id": "92732dc6"
+        },
+        {
+          "technique": "Path Traversal",
+          "payload": "..;/../",
+          "status_code": 200,
+          "url": "https://example.com//..;/../",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:19:32.169591",
+          "id": "8d395a44"
+        },
+        {
+          "technique": "Path Traversal",
+          "payload": "admin/../",
+          "status_code": 200,
+          "url": "https://example.com//admin/../",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:19:32.182737",
+          "id": "1199deb4"
+        },
+        {
+          "technique": "Path Traversal",
+          "payload": "admin/./../",
+          "status_code": 200,
+          "url": "https://example.com//admin/./../",
+          "method": "GET",
+          "headers": {},
+          "data": null,
+          "timestamp": "2026-05-15T20:19:32.195208",
+          "id": "408bff0b"
+        }
+      ],
+      "timestamp": 1778872773.692354
+    }
+  ]
+}

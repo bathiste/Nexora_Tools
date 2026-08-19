@@ -1,0 +1,11 @@
+# Twitter Account Pool
+# Format: username:password:email:email_password
+# The email / email_password fields are optional and only required for accounts
+# that have not yet been added to the twscrape pool (used to receive the
+# confirmation / login code the first time).
+#
+# Lines starting with # are ignored.
+#
+# Example:
+# alice:mypassword123:alice@gmail.com:email-password-here
+# bob:anothersecret456:bob@protonmail.com:

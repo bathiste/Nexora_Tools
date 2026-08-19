@@ -1,0 +1,430 @@
+"use strict";
+/**
+ * CVE Scanner Pipeline
+ * Orchestrates the full scanning workflow from recon to reporting
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ScannerPipeline = void 0;
+const events_1 = require("events");
+const types_1 = require("./types");
+const recon_1 = require("./recon/recon");
+const fingerprint_1 = require("./fingerprint/fingerprint");
+const cveMatcher_1 = require("./matcher/cveMatcher");
+const pocMapper_1 = require("./poc_mapper/pocMapper");
+class ScannerPipeline extends events_1.EventEmitter {
+    constructor(db) {
+        super();
+        this.activeScans = new Map();
+        this.db = db;
+        this.recon = new recon_1.ReconModule();
+        this.fingerprint = new fingerprint_1.FingerprintModule();
+        this.cveMatcher = new cveMatcher_1.CVEMatcher(db);
+        this.pocMapper = new pocMapper_1.PoCMapper();
+        // Forward events from modules
+        this.setupEventForwarding();
+    }
+    setupEventForwarding() {
+        [this.recon, this.fingerprint, this.cveMatcher, this.pocMapper].forEach((module) => {
+            module.on('progress', (data) => this.emit('progress', data));
+            module.on('finding', (data) => this.emit('finding', data));
+            module.on('error', (data) => this.emit('error', data));
+        });
+    }
+    /**
+     * Execute a full scan pipeline
+     */
+    async execute(scanId, config) {
+        const target = await this.getTarget(config.targetId);
+        if (!target) {
+            throw new types_1.ScannerError(`Target ${config.targetId} not found`, 'TARGET_NOT_FOUND');
+        }
+        this.activeScans.set(scanId, true);
+        const context = {
+            scanId,
+            target,
+            config,
+            results: {},
+            metadata: new Map(),
+        };
+        try {
+            await this.updateScanStatus(scanId, 'running', 'Initializing scan');
+            this.emitEvent('scan.started', scanId, { target: target.name });
+            // Phase 1: Subdomain Discovery
+            if (config.options?.subdomainDiscovery !== false) {
+                await this.runPhase(scanId, 'recon.subdomains', context, async () => {
+                    context.results.subdomains = await this.recon.discoverSubdomains(target, config);
+                    if (context.results.subdomains && context.results.subdomains.length > 0) {
+                        await this.saveSubdomains(context.results.subdomains);
+                    }
+                });
+            }
+            // Phase 2: Port Scanning
+            if (config.options?.portScan !== false) {
+                await this.runPhase(scanId, 'recon.ports', context, async () => {
+                    const hosts = this.getHostsForScanning(context);
+                    context.results.ports = await this.recon.scanPorts(hosts, config);
+                    if (context.results.ports && context.results.ports.length > 0) {
+                        await this.savePortScans(context.results.ports);
+                    }
+                });
+            }
+            // Phase 3: HTTP Fingerprinting
+            if (config.options?.httpFingerprint !== false) {
+                await this.runPhase(scanId, 'fingerprint.http', context, async () => {
+                    const webHosts = this.getWebHosts(context);
+                    context.results.fingerprints = await this.fingerprint.scanHttp(webHosts, config);
+                    if (context.results.fingerprints && context.results.fingerprints.length > 0) {
+                        await this.saveFingerprints(context.results.fingerprints);
+                    }
+                });
+            }
+            // Phase 4: CVE Matching
+            if (config.options?.cveMatching?.enabled !== false) {
+                await this.runPhase(scanId, 'matcher.cve', context, async () => {
+                    const technologies = this.extractTechnologies(context);
+                    context.results.cves = await this.cveMatcher.match(context.scanId, technologies, config);
+                    if (context.results.cves && context.results.cves.length > 0) {
+                        await this.saveScanResults(context.results.cves);
+                    }
+                });
+            }
+            // Phase 5: PoC Mapping
+            if (config.options?.pocMapping !== false) {
+                await this.runPhase(scanId, 'poc.mapping', context, async () => {
+                    const cveIds = (context.results.cves?.map((r) => r.cveId).filter((id) => !!id)) || [];
+                    context.results.pocs = await this.pocMapper.map(cveIds);
+                });
+            }
+            // Phase 6: Nuclei Verification (if enabled)
+            if (config.options?.nucleiScan) {
+                await this.runPhase(scanId, 'nuclei.scan', context, async () => {
+                    await this.runNucleiScan(context);
+                });
+            }
+            await this.updateScanStatus(scanId, 'completed', 'Scan completed successfully');
+            this.emitEvent('scan.completed', scanId, {
+                stats: this.generateStats(context),
+                phases: Object.keys(context.results),
+            });
+        }
+        catch (error) {
+            if (error instanceof types_1.ScanCancelledError) {
+                await this.updateScanStatus(scanId, 'cancelled', 'Scan was cancelled');
+                this.emitEvent('scan.cancelled', scanId, {});
+            }
+            else {
+                const message = error instanceof Error ? error.message : 'Unknown error';
+                await this.updateScanStatus(scanId, 'failed', message);
+                this.emitEvent('scan.failed', scanId, { error: message });
+                throw error;
+            }
+        }
+        finally {
+            this.activeScans.delete(scanId);
+        }
+    }
+    /**
+     * Cancel an active scan
+     */
+    cancel(scanId) {
+        if (this.activeScans.has(scanId)) {
+            this.activeScans.set(scanId, false);
+            this.recon.cancel();
+            this.fingerprint.cancel();
+            this.cveMatcher.cancel();
+            this.pocMapper.cancel();
+        }
+    }
+    /**
+     * Check if scan is still active
+     */
+    isActive(scanId) {
+        return !!this.activeScans.get(scanId);
+    }
+    /**
+     * Run a pipeline phase with error handling
+     */
+    async runPhase(scanId, phase, context, fn) {
+        if (!this.isActive(scanId)) {
+            throw new types_1.ScanCancelledError(scanId);
+        }
+        this.emitEvent('scan.phase.started', scanId, { phase });
+        await this.updateScanStatus(scanId, 'running', `Running: ${phase}`);
+        try {
+            await fn();
+            this.emitEvent('scan.phase.completed', scanId, { phase });
+        }
+        catch (error) {
+            console.error(`Phase ${phase} failed:`, error);
+            // Continue with other phases even if one fails
+        }
+    }
+    /**
+     * Get target details from database
+     */
+    async getTarget(targetId) {
+        const result = await this.db.query('SELECT * FROM gotham.targets WHERE id = $1', [targetId]);
+        if (result.rows.length === 0)
+            return null;
+        const row = result.rows[0];
+        return {
+            id: row.id,
+            name: row.name,
+            domain: row.domain,
+            ipAddress: row.ip_address,
+            description: row.description,
+            tags: row.tags,
+            metadata: row.metadata,
+        };
+    }
+    /**
+     * Update scan status in database
+     */
+    async updateScanStatus(scanId, status, message) {
+        const updates = ['status = $2'];
+        const params = [scanId, status];
+        let paramIndex = 3;
+        if (status === 'running' && message) {
+            updates.push(`started_at = COALESCE(started_at, CURRENT_TIMESTAMP)`);
+        }
+        if (status === 'completed' || status === 'failed' || status === 'cancelled') {
+            updates.push(`completed_at = CURRENT_TIMESTAMP`);
+        }
+        if (message) {
+            updates.push(`results = COALESCE(results, '{}'::jsonb) || $${paramIndex}::jsonb`);
+            params.push(JSON.stringify({ lastMessage: message, timestamp: new Date().toISOString() }));
+        }
+        await this.db.query(`UPDATE gotham.scans SET ${updates.join(', ')} WHERE id = $1`, params);
+    }
+    /**
+     * Get list of hosts to scan (target + subdomains)
+     */
+    getHostsForScanning(context) {
+        const hosts = [];
+        if (context.target.domain) {
+            hosts.push(context.target.domain);
+        }
+        if (context.target.ipAddress) {
+            hosts.push(context.target.ipAddress);
+        }
+        if (context.results.subdomains) {
+            hosts.push(...context.results.subdomains.map((s) => s.subdomain));
+        }
+        return [...new Set(hosts)];
+    }
+    /**
+     * Get web hosts (those with open HTTP/HTTPS ports)
+     */
+    getWebHosts(context) {
+        const webPorts = [80, 443, 8080, 8443, 3000, 8000, 8008, 8888, 9000];
+        const hosts = [];
+        // Add from port scan results
+        if (context.results.ports) {
+            for (const port of context.results.ports) {
+                if (port.state === 'open' && webPorts.includes(port.port)) {
+                    // Find the subdomain or target this port belongs to
+                    const subdomain = context.results.subdomains?.find((s) => s.id === port.subdomainId);
+                    const host = subdomain?.subdomain || context.target.domain || context.target.ipAddress;
+                    if (host) {
+                        hosts.push({
+                            host,
+                            port: port.port,
+                            https: port.port === 443 || port.port === 8443 || (port.service?.includes('https') ?? false),
+                        });
+                    }
+                }
+            }
+        }
+        // If no port scan, add default web ports for all hosts
+        if (hosts.length === 0) {
+            const allHosts = this.getHostsForScanning(context);
+            for (const host of allHosts) {
+                hosts.push({ host, port: 80, https: false });
+                hosts.push({ host, port: 443, https: true });
+            }
+        }
+        return hosts;
+    }
+    /**
+     * Extract all detected technologies from fingerprints
+     */
+    extractTechnologies(context) {
+        const techs = [];
+        if (context.results.fingerprints) {
+            for (const fp of context.results.fingerprints) {
+                if (fp.technologies) {
+                    for (const tech of fp.technologies) {
+                        techs.push({
+                            name: tech.name,
+                            version: tech.version,
+                            host: fp.url,
+                            port: fp.isHttps ? 443 : 80,
+                        });
+                    }
+                }
+                // Add server from headers if present
+                if (fp.server) {
+                    techs.push({
+                        name: fp.server.split('/')[0],
+                        version: fp.server.includes('/') ? fp.server.split('/')[1] : undefined,
+                        host: fp.url,
+                        port: fp.isHttps ? 443 : 80,
+                    });
+                }
+            }
+        }
+        // Add from port scan service detection
+        if (context.results.ports) {
+            for (const port of context.results.ports) {
+                if (port.service && port.state === 'open') {
+                    const host = context.results.subdomains?.find((s) => s.id === port.subdomainId)?.subdomain ||
+                        context.target.domain ||
+                        context.target.ipAddress;
+                    if (host) {
+                        techs.push({
+                            name: port.service,
+                            version: port.version,
+                            host,
+                            port: port.port,
+                        });
+                    }
+                }
+            }
+        }
+        return techs;
+    }
+    /**
+     * Save discovered subdomains to database
+     */
+    async saveSubdomains(subdomains) {
+        for (const sub of subdomains) {
+            await this.db.query(`INSERT INTO gotham.subdomains (target_id, subdomain, ip_address, is_alive, source)
+         VALUES ($1, $2, $3, $4, $5)
+         ON CONFLICT (target_id, subdomain) DO UPDATE SET
+           ip_address = EXCLUDED.ip_address,
+           is_alive = EXCLUDED.is_alive`, [sub.targetId, sub.subdomain, sub.ipAddress, sub.isAlive, sub.source]);
+        }
+    }
+    /**
+     * Save port scan results to database
+     */
+    async savePortScans(ports) {
+        for (const port of ports) {
+            await this.db.query(`INSERT INTO gotham.port_scans 
+         (target_id, subdomain_id, port, protocol, state, service, version, banner)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`, [
+                port.targetId,
+                port.subdomainId,
+                port.port,
+                port.protocol,
+                port.state,
+                port.service,
+                port.version,
+                port.banner,
+            ]);
+        }
+    }
+    /**
+     * Save HTTP fingerprints to database
+     */
+    async saveFingerprints(fingerprints) {
+        for (const fp of fingerprints) {
+            await this.db.query(`INSERT INTO gotham.http_fingerprints 
+         (target_id, subdomain_id, url, status_code, title, headers, technologies, 
+          server, content_type, content_length, redirects_to, is_https, has_waf, waf_name)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`, [
+                fp.targetId,
+                fp.subdomainId,
+                fp.url,
+                fp.statusCode,
+                fp.title,
+                JSON.stringify(fp.headers),
+                JSON.stringify(fp.technologies),
+                fp.server,
+                fp.contentType,
+                fp.contentLength,
+                fp.redirectsTo,
+                fp.isHttps,
+                fp.hasWaf,
+                fp.wafName,
+            ]);
+        }
+    }
+    /**
+     * Save CVE scan results to database
+     */
+    async saveScanResults(results) {
+        for (const result of results) {
+            await this.db.query(`INSERT INTO gotham.scan_results 
+         (scan_id, target_id, subdomain_id, cve_id, severity, confidence, 
+          matched_technology, detected_version, poc_available, nuclei_match)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`, [
+                result.scanId,
+                result.targetId,
+                result.subdomainId,
+                result.cveId,
+                result.severity,
+                result.confidence,
+                result.matchedTechnology,
+                result.detectedVersion,
+                result.pocAvailable,
+                result.nucleiMatch,
+            ]);
+        }
+    }
+    /**
+     * Run Nuclei verification scan
+     */
+    async runNucleiScan(context) {
+        // Implementation would call nuclei binary
+        // For now, this is a placeholder
+        console.log('Nuclei scan would run here with context:', context.scanId);
+    }
+    /**
+     * Generate scan statistics
+     */
+    generateStats(context) {
+        return {
+            subdomainsFound: context.results.subdomains?.length || 0,
+            openPorts: context.results.ports?.filter((p) => p.state === 'open').length || 0,
+            webServices: context.results.fingerprints?.length || 0,
+            cvesFound: context.results.cves?.length || 0,
+            withPoc: context.results.cves?.filter((c) => c.pocAvailable).length || 0,
+        };
+    }
+    /**
+     * Emit scan event
+     */
+    emitEvent(type, scanId, data) {
+        const event = {
+            type,
+            scanId,
+            timestamp: new Date(),
+            data,
+        };
+        this.emit('event', event);
+    }
+    /**
+     * Get scan progress
+     */
+    async getProgress(scanId) {
+        const result = await this.db.query('SELECT * FROM gotham.scans WHERE id = $1', [scanId]);
+        if (result.rows.length === 0)
+            return null;
+        const row = result.rows[0];
+        return {
+            scanId: row.id,
+            status: row.status,
+            phase: row.results?.lastMessage || 'Unknown',
+            progress: row.status === 'completed' ? 100 : row.status === 'running' ? 50 : 0,
+            totalTasks: 0,
+            completedTasks: 0,
+            message: row.results?.lastMessage,
+            startedAt: row.started_at,
+            completedAt: row.completed_at,
+            error: row.error_message,
+        };
+    }
+}
+exports.ScannerPipeline = ScannerPipeline;
+exports.default = ScannerPipeline;

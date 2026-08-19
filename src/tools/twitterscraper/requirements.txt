@@ -1,0 +1,5 @@
+twscrape>=0.19.1
+httpx[socks]>=0.24.0
+click>=8.1.0
+rich>=12.0.0
+python-dotenv>=1.0.0
